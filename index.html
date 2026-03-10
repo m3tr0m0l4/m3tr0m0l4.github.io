@@ -81,8 +81,23 @@
 <b><br>Third party game libraries<br></b>
 <a>(nothing yet)</a>
 
+<hr>
+<b>Chat</b><br>
+<div id="login">
+  Name: <input id="u" maxlength="20">
+  <button onclick="connect()">Connect</button>
+  <span id="err" style="color:red"></span>
+</div>
+
+<div id="chat" style="display:none">
+  <div id="msgs" style="height:200px; overflow-y:auto; border:1px solid #ccc; padding:4px; font-family:monospace; font-size:13px; margin-top:6px"></div>
+  <div id="typers" style="font-size:11px; color:gray; height:16px"></div>
+  <input id="m" style="width:400px" placeholder="message…" disabled>
+  <button onclick="send()" id="sb" disabled>Send</button>
+</div>
+
 <script>
-  const SERVER = 'https://archivezip--JacobMola.replit.app'; // e.g. wss://my-chat.username.replit.app
+  const SERVER = 'wss://archivezip--JacobMola.replit.app';
 
   let ws, me, ping;
   let typingUsers = new Set(), clearTimers = {};
@@ -95,7 +110,6 @@
     ws = new WebSocket(SERVER);
     ws.onopen = () => {
       ws.send(JSON.stringify({ type: 'join', username: u }));
-      // Send a ping every 30s to prevent Replit from closing the idle connection
       ping = setInterval(() => { if (ws.readyState === 1) ws.send(JSON.stringify({ type: 'ping' })); }, 30000);
     };
     ws.onmessage = e => handle(JSON.parse(e.data));
@@ -121,7 +135,6 @@
     } else if (d.type === 'message') { renderMsg(d);
     } else if (d.type === 'system')  { addLine('--- ' + d.text + ' ---');
     } else if (d.type === 'typing')  { showTyping(d.username); }
-    // pong responses are ignored
   }
 
   function renderMsg(m) {
