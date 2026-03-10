@@ -7,112 +7,20 @@
   <link rel="icon" type="image/svg" href="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Gmail_icon_%282020%29.svg/960px-Gmail_icon_%282020%29.svg.png?20221017173631">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+  <!-- Minimal dark mode CSS only -->
   <style>
-    :root {
-      --bg: #ffffff;
-      --text: #111111;
-      --muted: #666666;
-      --border: #cccccc;
-      --panel: #ffffff;
-      --btn-bg: #eeeeee;
-      --btn-text: #111111;
-      --input-bg: #ffffff;
-      --input-text: #111111;
-      --link: #0b5bd3;
-    }
-
     body.dark {
-      --bg: #0b0f14;
-      --text: #e6edf3;
-      --muted: #9aa4af;
-      --border: #2a3441;
-      --panel: #111823;
-      --btn-bg: #1b2430;
-      --btn-text: #e6edf3;
-      --input-bg: #0f1622;
-      --input-text: #e6edf3;
-      --link: #6ea8ff;
+      background: #0b0f14;
+      color: #e6edf3;
     }
-
-    body {
-      margin: 12px;
-      background: var(--bg);
-      color: var(--text);
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    body.dark a { color: #8ab4ff; }
+    body.dark input, body.dark button {
+      background: #111823;
+      color: #e6edf3;
+      border: 1px solid #2a3441;
     }
-
-    a { color: var(--link); }
-
-    button {
-      background: var(--btn-bg);
-      color: var(--btn-text);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 8px 10px;
-      cursor: pointer;
-    }
-
-    input {
-      background: var(--input-bg);
-      color: var(--input-text);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 7px 8px;
-      outline: none;
-    }
-
-    hr { border: none; border-top: 1px solid var(--border); }
-
-    #msgs {
-      background: var(--panel);
-      border: 1px solid var(--border) !important;
-    }
-
-    .footer {
-      margin-top: 22px;
-      padding-top: 12px;
-      border-top: 1px solid var(--border);
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .toggle {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 13px;
-      color: var(--muted);
-      user-select: none;
-    }
-
-    .switch {
-      width: 44px;
-      height: 24px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: var(--btn-bg);
-      position: relative;
-    }
-
-    .switch::after {
-      content: "";
-      width: 18px;
-      height: 18px;
-      border-radius: 999px;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      position: absolute;
-      top: 50%;
-      left: 3px;
-      transform: translateY(-50%);
-      transition: left 0.18s ease;
-    }
-
-    body.dark .switch::after {
-      left: 22px;
-    }
+    body.dark hr { border-color: #2a3441; }
+    body.dark #msgs { border-color: #2a3441 !important; }
   </style>
 </head>
 
@@ -178,12 +86,13 @@
   <button onclick="send()" id="sb" disabled>Send</button>
 </div>
 
-<!-- dark mode toggle at bottom -->
-<div class="footer">
-  <div class="toggle" role="button" tabindex="0" onclick="toggleDarkMode()" onkeydown="if(event.key==='Enter'||event.key===' '){toggleDarkMode();}">
-    <span id="modeLabel">toggle dark mode</span>
-    <span class="switch" aria-hidden="true"></span>
-  </div>
+<!-- Bare-bones dark mode toggle at bottom -->
+<hr>
+<div style="margin-top:10px;">
+  <label>
+    <input type="checkbox" id="darkToggle">
+    dark mode
+  </label>
 </div>
 
 <script>
@@ -195,23 +104,18 @@
 
   let typingUsers = new Set(), clearTimers = {};
 
-  // ----- Dark mode (persisted) -----
-  function applyThemeFromStorage() {
-    const v = localStorage.getItem('darkMode');
-    const on = v === '1';
-    document.body.classList.toggle('dark', on);
-    document.getElementById('modeLabel').textContent = on ? 'Dark mode: on' : 'Dark mode: off';
-  }
+  // ---- Dark mode (persisted) ----
+  const darkToggle = document.getElementById('darkToggle');
 
-  function toggleDarkMode() {
-    const on = !document.body.classList.contains('dark');
-    document.body.classList.toggle('dark', on);
+  function applyDark(on) {
+    document.body.classList.toggle('dark', !!on);
     localStorage.setItem('darkMode', on ? '1' : '0');
-    document.getElementById('modeLabel').textContent = on ? 'Dark mode: on' : 'Dark mode: off';
+    darkToggle.checked = !!on;
   }
 
-  applyThemeFromStorage();
-  // ---------------------------------
+  applyDark(localStorage.getItem('darkMode') === '1');
+  darkToggle.addEventListener('change', () => applyDark(darkToggle.checked));
+  // -------------------------------
 
   function setButtonsDisabled(disabled) {
     const u = document.getElementById('u');
@@ -226,7 +130,6 @@
     try { if (ping) clearInterval(ping); } catch {}
     ping = null;
 
-    // clear typing timers
     for (const k in clearTimers) {
       try { clearTimeout(clearTimers[k]); } catch {}
       delete clearTimers[k];
@@ -234,7 +137,6 @@
     typingUsers.clear();
     updateTyping();
 
-    // close old socket if it exists
     if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) {
       try { ws.close(1000, 'reconnect'); } catch {}
     }
@@ -243,12 +145,9 @@
 
   function connect(onOpenSend) {
     const err = document.getElementById('err');
-
-    // guard against double connect
     if (isConnecting) return;
     isConnecting = true;
 
-    // ensure only one active socket
     safeClose();
 
     err.textContent = 'connecting...';
@@ -270,7 +169,7 @@
     };
 
     sock.onmessage = e => {
-      if (ws !== sock) return; // ignore messages from old sockets
+      if (ws !== sock) return;
       let d;
       try { d = JSON.parse(e.data); } catch { return; }
       handle(d);
@@ -387,7 +286,7 @@
       if (u.verified) {
         const check = document.createElement('span');
         check.textContent = ' ✓';
-        check.style.color = '#1d4ed8'; // blue
+        check.style.color = '#1d4ed8';
         check.style.fontWeight = 'bold';
         el.appendChild(check);
       }
@@ -414,7 +313,7 @@
     if (m.verified) {
       const check = document.createElement('span');
       check.textContent = ' ✓';
-      check.style.color = '#1d4ed8'; // blue
+      check.style.color = '#1d4ed8';
       check.style.fontWeight = 'bold';
       line.appendChild(check);
     }
@@ -468,7 +367,6 @@
       names.length ? names.join(', ') + ' typing...' : '';
   }
 
-  // Enter key helpers
   document.getElementById('u').addEventListener('keydown', e => {
     if (e.key === 'Enter') joinGuest();
   });
