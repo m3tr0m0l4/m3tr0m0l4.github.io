@@ -81,3 +81,90 @@
 <b><br>Third party game libraries<br></b>
 <a>(nothing yet)</a>
 
+<hr>
+<b>Chat</b><br>
+<div id="login">
+  Name: <input id="u" maxlength="20">
+  <button onclick="connect()">Connect</button>
+  <span id="err" style="color:red"></span>
+</div>
+
+<div id="chat" style="display:none">
+  <div id="msgs" style="height:200px; overflow-y:auto; border:1px solid #ccc; padding:4px; font-family:monospace; font-size:13px; margin-top:6px"></div>
+  <div id="typers" style="font-size:11px; color:gray; height:16px"></div>
+  <input id="m" style="width:400px" placeholder="message…" disabled>
+  <button onclick="send()" id="sb" disabled>Send</button>
+</div>
+
+<script>
+  const SERVER = 'https://archivezip--JacobMola.replit.app';
+
+  let ws, me;
+  let typingUsers = new Set(), clearTimers = {};
+
+  function connect() {
+    const u = document.getElementById('u').value.trim();
+    const err = document.getElementById('err');
+    if (!u) { err.textContent = 'need a name'; return; }
+    err.textContent = 'connecting...';
+    ws = new WebSocket(SERVER);
+    ws.onopen = () => ws.send(JSON.stringify({ type: 'join', username: u }));
+    ws.onmessage = e => handle(JSON.parse(e.data));
+    ws.onerror = () => { err.textContent = 'connection failed'; };
+    ws.onclose = () => { addLine('--- disconnected ---'); document.getElementById('m').disabled = true; document.getElementById('sb').disabled = true; };
+  }
+
+  function handle(d) {
+    if (d.type === 'welcome') {
+      me = d.username;
+      document.getElementById('login').style.display = 'none';
+      document.getElementById('chat').style.display = '';
+      document.getElementById('m').disabled = false;
+      document.getElementById('sb').disabled = false;
+      document.getElementById('m').focus();
+      d.history.forEach(renderMsg);
+      addLine('--- connected as ' + me + ' ---');
+    } else if (d.type === 'message') { renderMsg(d);
+    } else if (d.type === 'system')  { addLine('--- ' + d.text + ' ---');
+    } else if (d.type === 'typing')  { showTyping(d.username); }
+  }
+
+  function renderMsg(m) {
+    const t = new Date(m.timestamp).toLocaleTimeString('en-US', { hour12:false, hour:'2-digit', minute:'2-digit' });
+    addLine(`[${t}] ${m.username}: ${m.text}`);
+  }
+
+  function addLine(text) {
+    const msgs = document.getElementById('msgs');
+    const line = document.createElement('div');
+    line.textContent = text;
+    msgs.appendChild(line);
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+
+  function send() {
+    const inp = document.getElementById('m');
+    const text = inp.value.trim();
+    if (!text || !ws || ws.readyState !== 1) return;
+    ws.send(JSON.stringify({ type: 'message', text }));
+    inp.value = '';
+  }
+
+  function showTyping(username) {
+    typingUsers.add(username);
+    updateTyping();
+    clearTimeout(clearTimers[username]);
+    clearTimers[username] = setTimeout(() => { typingUsers.delete(username); updateTyping(); }, 2500);
+  }
+
+  function updateTyping() {
+    const names = [...typingUsers];
+    document.getElementById('typers').textContent = names.length ? names.join(', ') + ' typing...' : '';
+  }
+
+  document.getElementById('u').addEventListener('keydown', e => { if (e.key === 'Enter') connect(); });
+  document.getElementById('m').addEventListener('keydown', e => {
+    if (e.key === 'Enter') { send(); return; }
+    if (ws?.readyState === 1) ws.send(JSON.stringify({ type: 'typing' }));
+  });
+</script>
