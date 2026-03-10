@@ -5,6 +5,115 @@
   <meta charset="utf-8" />
   <title>Unblocked Library</title>
   <link rel="icon" type="image/svg" href="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Gmail_icon_%282020%29.svg/960px-Gmail_icon_%282020%29.svg.png?20221017173631">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text: #111111;
+      --muted: #666666;
+      --border: #cccccc;
+      --panel: #ffffff;
+      --btn-bg: #eeeeee;
+      --btn-text: #111111;
+      --input-bg: #ffffff;
+      --input-text: #111111;
+      --link: #0b5bd3;
+    }
+
+    body.dark {
+      --bg: #0b0f14;
+      --text: #e6edf3;
+      --muted: #9aa4af;
+      --border: #2a3441;
+      --panel: #111823;
+      --btn-bg: #1b2430;
+      --btn-text: #e6edf3;
+      --input-bg: #0f1622;
+      --input-text: #e6edf3;
+      --link: #6ea8ff;
+    }
+
+    body {
+      margin: 12px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    a { color: var(--link); }
+
+    button {
+      background: var(--btn-bg);
+      color: var(--btn-text);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 10px;
+      cursor: pointer;
+    }
+
+    input {
+      background: var(--input-bg);
+      color: var(--input-text);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 7px 8px;
+      outline: none;
+    }
+
+    hr { border: none; border-top: 1px solid var(--border); }
+
+    #msgs {
+      background: var(--panel);
+      border: 1px solid var(--border) !important;
+    }
+
+    .footer {
+      margin-top: 22px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--muted);
+      user-select: none;
+    }
+
+    .switch {
+      width: 44px;
+      height: 24px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--btn-bg);
+      position: relative;
+    }
+
+    .switch::after {
+      content: "";
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      position: absolute;
+      top: 50%;
+      left: 3px;
+      transform: translateY(-50%);
+      transition: left 0.18s ease;
+    }
+
+    body.dark .switch::after {
+      left: 22px;
+    }
+  </style>
 </head>
 
 <body>
@@ -69,6 +178,14 @@
   <button onclick="send()" id="sb" disabled>Send</button>
 </div>
 
+<!-- dark mode toggle at bottom -->
+<div class="footer">
+  <div class="toggle" role="button" tabindex="0" onclick="toggleDarkMode()" onkeydown="if(event.key==='Enter'||event.key===' '){toggleDarkMode();}">
+    <span id="modeLabel">toggle dark mode</span>
+    <span class="switch" aria-hidden="true"></span>
+  </div>
+</div>
+
 <script>
   // IMPORTANT: must be ws:// or wss:// (not https://)
   const SERVER = 'wss://archivezip--JacobMola.replit.app';
@@ -77,6 +194,24 @@
   let isConnecting = false;
 
   let typingUsers = new Set(), clearTimers = {};
+
+  // ----- Dark mode (persisted) -----
+  function applyThemeFromStorage() {
+    const v = localStorage.getItem('darkMode');
+    const on = v === '1';
+    document.body.classList.toggle('dark', on);
+    document.getElementById('modeLabel').textContent = on ? 'Dark mode: on' : 'Dark mode: off';
+  }
+
+  function toggleDarkMode() {
+    const on = !document.body.classList.contains('dark');
+    document.body.classList.toggle('dark', on);
+    localStorage.setItem('darkMode', on ? '1' : '0');
+    document.getElementById('modeLabel').textContent = on ? 'Dark mode: on' : 'Dark mode: off';
+  }
+
+  applyThemeFromStorage();
+  // ---------------------------------
 
   function setButtonsDisabled(disabled) {
     const u = document.getElementById('u');
