@@ -1,152 +1,252 @@
+<!-- index.html -->
+<!doctype html>
+<html>
 <head>
+  <meta charset="utf-8" />
   <title>Unblocked Library</title>
   <link rel="icon" type="image/svg" href="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Gmail_icon_%282020%29.svg/960px-Gmail_icon_%282020%29.svg.png?20221017173631">
 </head>
+
+<body>
 <h1>unblocked library</h1>
 <p>Linewize is annoying. Here is a website for unblocked resources.</p>
+
 <b><br>!!! NEW !!! BYPASS ANYTHING (experimental! some sites may be broken and the successfulness against blocking has not yet been fully tested!)<br></b>
-<button 
-  onclick="window.open('https://scramjet-app--m3tr0m0l4dev12.replit.app', '_blank')" 
+<button
+  onclick="window.open('https://scramjet-app--m3tr0m0l4dev12.replit.app', '_blank')"
   style="width: 250px; white-space: nowrap;">
   Scramjet Proxy
 </button>
-<button 
-  onclick="window.open('/proxy-tips/', '_blank')" 
+<button
+  onclick="window.open('/proxy-tips/', '_blank')"
   style="width: 250px; white-space: nowrap;">
   Tips and tricks for using Scramjet
 </button>
+
 <b><br>Arcade emulator<br></b>
-<button 
-  onclick="window.open('/arcade-loading-page/', '_blank')" 
-  style="width: 250px; white-space: nowrap;">
-  Tutorial
-</button>
+<button onclick="window.open('/arcade-loading-page/', '_blank')" style="width: 250px; white-space: nowrap;">Tutorial</button>
+
 <b><br>Play any flash game unblocked<br></b>
-<button 
-  onclick="window.open('/flash-loading-page/', '_blank')" 
-  style="width: 250px; white-space: nowrap;">
-  Tutorial
-</button>
+<button onclick="window.open('/flash-loading-page/', '_blank')" style="width: 250px; white-space: nowrap;">Tutorial</button>
+
 <b><br>Other games<br></b>
-<button 
-  onclick="window.open('/slope/', '_blank')" 
-  style="width: 250px; white-space: nowrap;">
-  Slope unblocked
-</button>
-<button 
-  onclick="window.open('/half-life/', '_blank')" 
-  style="width: 250px; white-space: nowrap;">
-  Half Life (FPS)
-</button>
-<button 
-  onclick="window.open('/hexgl/', '_blank')" 
-  style="width: 250px; white-space: nowrap;">
-  HexGL (Futuristic Racing!)
-</button>
-<button 
-  onclick="window.open('/eaglercraft/', '_blank')" 
-  style="width: 250px; white-space: nowrap;">
-  Minecraft 1.5.2
-</button>
-<button 
-  onclick="window.open('/2048/', '_blank')" 
-  style="width: 250px; white-space: nowrap;">
-  2048
-</button>
-<button 
-  onclick="window.open('/adarkroom/', '_blank')" 
-  style="width: 250px; white-space: nowrap;">
-  A Dark Room
-</button>
-<button 
-  onclick="window.open('/run3/', '_blank')" 
-  style="width: 250px; white-space: nowrap;">
-  Run 3
-</button>
-<button 
-  onclick="window.open('/shapez.io-master/', '_blank')" 
-  style="width: 250px; white-space: nowrap;">
-  Shapez.io
-</button>
-<button 
-  onclick="window.open('/retrobowl/', '_blank')" 
-  style="width: 250px; white-space: nowrap;">
-  Retro Bowl 
-</button>
-<button 
-  onclick="window.open('/vex3/', '_blank')" 
-  style="width: 250px; white-space: nowrap;">
-  Vex 3
-</button>
+<button onclick="window.open('/slope/', '_blank')" style="width: 250px; white-space: nowrap;">Slope unblocked</button>
+<button onclick="window.open('/half-life/', '_blank')" style="width: 250px; white-space: nowrap;">Half Life (FPS)</button>
+<button onclick="window.open('/hexgl/', '_blank')" style="width: 250px; white-space: nowrap;">HexGL (Futuristic Racing!)</button>
+<button onclick="window.open('/eaglercraft/', '_blank')" style="width: 250px; white-space: nowrap;">Minecraft 1.5.2</button>
+<button onclick="window.open('/2048/', '_blank')" style="width: 250px; white-space: nowrap;">2048</button>
+<button onclick="window.open('/adarkroom/', '_blank')" style="width: 250px; white-space: nowrap;">A Dark Room</button>
+<button onclick="window.open('/run3/', '_blank')" style="width: 250px; white-space: nowrap;">Run 3</button>
+<button onclick="window.open('/shapez.io-master/', '_blank')" style="width: 250px; white-space: nowrap;">Shapez.io</button>
+<button onclick="window.open('/retrobowl/', '_blank')" style="width: 250px; white-space: nowrap;">Retro Bowl</button>
+<button onclick="window.open('/vex3/', '_blank')" style="width: 250px; white-space: nowrap;">Vex 3</button>
+
 <b><br>Third party game libraries<br></b>
 <a>(nothing yet)</a>
 
 <hr>
+
 <b>Chat</b><br>
+
 <div id="login">
   Name: <input id="u" maxlength="20">
-  <button onclick="connect()">Connect</button>
-  <span id="err" style="color:red"></span>
+  Password (optional): <input id="p" type="password" maxlength="40">
+  <button onclick="joinGuest()">Join as Guest</button>
+  <button onclick="doRegister()">Register</button>
+  <button onclick="doLogin()">Login</button>
+  <span id="err" style="color:red; margin-left:8px"></span>
 </div>
 
 <div id="chat" style="display:none">
+  <div style="margin:6px 0; font-family:monospace; font-size:12px;">
+    Users online: <span id="users">(loading)</span>
+  </div>
+
   <div id="msgs" style="height:200px; overflow-y:auto; border:1px solid #ccc; padding:4px; font-family:monospace; font-size:13px; margin-top:6px"></div>
   <div id="typers" style="font-size:11px; color:gray; height:16px"></div>
+
   <input id="m" style="width:400px" placeholder="message…" disabled>
   <button onclick="send()" id="sb" disabled>Send</button>
 </div>
 
 <script>
+  // IMPORTANT: must be ws:// or wss:// (not https://)
   const SERVER = 'wss://archivezip--JacobMola.replit.app';
 
-  let ws, me, ping;
+  let ws, me, ping, myVerified = false;
   let typingUsers = new Set(), clearTimers = {};
 
-  function connect() {
-    const u = document.getElementById('u').value.trim();
+  function connect(onOpenSend) {
     const err = document.getElementById('err');
-    if (!u) { err.textContent = 'need a name'; return; }
     err.textContent = 'connecting...';
+
     ws = new WebSocket(SERVER);
+
     ws.onopen = () => {
-      ws.send(JSON.stringify({ type: 'join', username: u }));
-      ping = setInterval(() => { if (ws.readyState === 1) ws.send(JSON.stringify({ type: 'ping' })); }, 30000);
+      onOpenSend();
+      ping = setInterval(() => {
+        if (ws.readyState === 1) ws.send(JSON.stringify({ type: 'ping' }));
+      }, 30000);
     };
-    ws.onmessage = e => handle(JSON.parse(e.data));
+
+    ws.onmessage = e => {
+      let d;
+      try { d = JSON.parse(e.data); } catch { return; }
+      handle(d);
+    };
+
     ws.onerror = () => { err.textContent = 'connection failed'; };
+
     ws.onclose = () => {
       clearInterval(ping);
-      addLine('--- disconnected ---');
+      addSystemLine('--- disconnected ---');
       document.getElementById('m').disabled = true;
       document.getElementById('sb').disabled = true;
     };
   }
 
+  function joinGuest() {
+    const u = document.getElementById('u').value.trim();
+    const err = document.getElementById('err');
+    if (!u) { err.textContent = 'need a name'; return; }
+
+    connect(() => {
+      ws.send(JSON.stringify({ type: 'join', username: u }));
+    });
+  }
+
+  function doRegister() {
+    const u = document.getElementById('u').value.trim();
+    const p = document.getElementById('p').value;
+    const err = document.getElementById('err');
+
+    if (!u) { err.textContent = 'need a name'; return; }
+    if (!p || p.trim().length < 3) { err.textContent = 'password must be at least 3 characters'; return; }
+
+    connect(() => {
+      ws.send(JSON.stringify({ type: 'register', username: u, password: p }));
+    });
+  }
+
+  function doLogin() {
+    const u = document.getElementById('u').value.trim();
+    const p = document.getElementById('p').value;
+    const err = document.getElementById('err');
+
+    if (!u) { err.textContent = 'need a name'; return; }
+    if (!p) { err.textContent = 'need password to login'; return; }
+
+    connect(() => {
+      ws.send(JSON.stringify({ type: 'login', username: u, password: p }));
+    });
+  }
+
   function handle(d) {
+    const err = document.getElementById('err');
+
+    if (d.type === 'error') {
+      err.textContent = d.reason || 'error';
+      return;
+    }
+
     if (d.type === 'welcome') {
       me = d.username;
+      myVerified = !!d.verified;
+
       document.getElementById('login').style.display = 'none';
       document.getElementById('chat').style.display = '';
       document.getElementById('m').disabled = false;
       document.getElementById('sb').disabled = false;
       document.getElementById('m').focus();
-      d.history.forEach(renderMsg);
-      addLine('--- connected as ' + me + ' ---');
-    } else if (d.type === 'message') { renderMsg(d);
-    } else if (d.type === 'system')  { addLine('--- ' + d.text + ' ---');
-    } else if (d.type === 'typing')  { showTyping(d.username); }
+
+      // render history
+      (d.history || []).forEach(renderMsg);
+
+      // user list
+      renderUsers(d.users || []);
+
+      addSystemLine('--- connected as ' + me + (myVerified ? ' ✅' : '') + ' ---');
+
+    } else if (d.type === 'message') {
+      renderMsg(d);
+
+    } else if (d.type === 'system') {
+      addSystemLine('--- ' + d.text + ' ---');
+
+    } else if (d.type === 'typing') {
+      showTyping(d.username);
+
+    } else if (d.type === 'userlist') {
+      renderUsers(d.users || []);
+    }
+  }
+
+  function renderUsers(users) {
+    const el = document.getElementById('users');
+    if (!users.length) { el.textContent = '(none)'; return; }
+
+    // Display: name + blue check if verified
+    el.textContent = '';
+    users.forEach((u, i) => {
+      const span = document.createElement('span');
+      span.textContent = u.username;
+      el.appendChild(span);
+
+      if (u.verified) {
+        const check = document.createElement('span');
+        check.textContent = ' ✓';
+        check.style.color = '#1d4ed8'; // blue
+        check.style.fontWeight = 'bold';
+        el.appendChild(check);
+      }
+
+      if (i !== users.length - 1) el.appendChild(document.createTextNode(', '));
+    });
   }
 
   function renderMsg(m) {
-    const t = new Date(m.timestamp).toLocaleTimeString('en-US', { hour12:false, hour:'2-digit', minute:'2-digit' });
-    addLine(`[${t}] ${m.username}: ${m.text}`);
+    const t = new Date(m.timestamp).toLocaleTimeString('en-US', {
+      hour12: false, hour: '2-digit', minute: '2-digit'
+    });
+
+    const line = document.createElement('div');
+
+    const time = document.createElement('span');
+    time.textContent = `[${t}] `;
+    line.appendChild(time);
+
+    const name = document.createElement('span');
+    name.textContent = m.username;
+    line.appendChild(name);
+
+    if (m.verified) {
+      const check = document.createElement('span');
+      check.textContent = ' ✓';
+      check.style.color = '#1d4ed8'; // blue
+      check.style.fontWeight = 'bold';
+      line.appendChild(check);
+    }
+
+    const sep = document.createElement('span');
+    sep.textContent = ': ';
+    line.appendChild(sep);
+
+    const msg = document.createElement('span');
+    msg.textContent = m.text;
+    line.appendChild(msg);
+
+    addNode(line);
   }
 
-  function addLine(text) {
-    const msgs = document.getElementById('msgs');
+  function addSystemLine(text) {
     const line = document.createElement('div');
     line.textContent = text;
-    msgs.appendChild(line);
+    addNode(line);
+  }
+
+  function addNode(node) {
+    const msgs = document.getElementById('msgs');
+    msgs.appendChild(node);
     msgs.scrollTop = msgs.scrollHeight;
   }
 
@@ -159,20 +259,36 @@
   }
 
   function showTyping(username) {
+    if (!username) return;
     typingUsers.add(username);
     updateTyping();
+
     clearTimeout(clearTimers[username]);
-    clearTimers[username] = setTimeout(() => { typingUsers.delete(username); updateTyping(); }, 2500);
+    clearTimers[username] = setTimeout(() => {
+      typingUsers.delete(username);
+      updateTyping();
+    }, 2500);
   }
 
   function updateTyping() {
     const names = [...typingUsers];
-    document.getElementById('typers').textContent = names.length ? names.join(', ') + ' typing...' : '';
+    document.getElementById('typers').textContent =
+      names.length ? names.join(', ') + ' typing...' : '';
   }
 
-  document.getElementById('u').addEventListener('keydown', e => { if (e.key === 'Enter') connect(); });
+  // Enter key helpers
+  document.getElementById('u').addEventListener('keydown', e => {
+    if (e.key === 'Enter') joinGuest();
+  });
+
+  document.getElementById('p').addEventListener('keydown', e => {
+    if (e.key === 'Enter') doLogin();
+  });
+
   document.getElementById('m').addEventListener('keydown', e => {
     if (e.key === 'Enter') { send(); return; }
     if (ws?.readyState === 1) ws.send(JSON.stringify({ type: 'typing' }));
   });
 </script>
+</body>
+</html>
