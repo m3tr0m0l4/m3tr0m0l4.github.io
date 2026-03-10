@@ -49,8 +49,8 @@
 <b>Chat</b><br>
 
 <div id="login">
-  Name: <input id="u" maxlength="20">
-  Password (optional): <input id="p" type="password" maxlength="40">
+  Name: <input id="u" maxlength="20" autocomplete="nickname">
+  Password (optional): <input id="p" type="password" maxlength="40" autocomplete="current-password">
   <button onclick="joinGuest()">Join as Guest</button>
   <button onclick="doRegister()">Register</button>
   <button onclick="doLogin()">Login</button>
@@ -73,35 +73,90 @@
   // IMPORTANT: must be ws:// or wss:// (not https://)
   const SERVER = 'wss://archivezip--JacobMola.replit.app';
 
-  let ws, me, ping, myVerified = false;
+  let ws = null, me = null, ping = null, myVerified = false;
+  let isConnecting = false;
+
   let typingUsers = new Set(), clearTimers = {};
+
+  function setButtonsDisabled(disabled) {
+    const u = document.getElementById('u');
+    const p = document.getElementById('p');
+    const buttons = document.querySelectorAll('#login button');
+    if (u) u.disabled = disabled;
+    if (p) p.disabled = disabled;
+    buttons.forEach(b => b.disabled = disabled);
+  }
+
+  function safeClose() {
+    try { if (ping) clearInterval(ping); } catch {}
+    ping = null;
+
+    // clear typing timers
+    for (const k in clearTimers) {
+      try { clearTimeout(clearTimers[k]); } catch {}
+      delete clearTimers[k];
+    }
+    typingUsers.clear();
+    updateTyping();
+
+    // close old socket if it exists
+    if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) {
+      try { ws.close(1000, 'reconnect'); } catch {}
+    }
+    ws = null;
+  }
 
   function connect(onOpenSend) {
     const err = document.getElementById('err');
+
+    // guard against double connect
+    if (isConnecting) return;
+    isConnecting = true;
+
+    // ensure only one active socket
+    safeClose();
+
     err.textContent = 'connecting...';
+    setButtonsDisabled(true);
 
-    ws = new WebSocket(SERVER);
+    const sock = new WebSocket(SERVER);
+    ws = sock;
 
-    ws.onopen = () => {
+    sock.onopen = () => {
+      if (ws !== sock) return;
+
       onOpenSend();
+
       ping = setInterval(() => {
-        if (ws.readyState === 1) ws.send(JSON.stringify({ type: 'ping' }));
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({ type: 'ping' }));
+        }
       }, 30000);
     };
 
-    ws.onmessage = e => {
+    sock.onmessage = e => {
+      if (ws !== sock) return; // ignore messages from old sockets
       let d;
       try { d = JSON.parse(e.data); } catch { return; }
       handle(d);
     };
 
-    ws.onerror = () => { err.textContent = 'connection failed'; };
+    sock.onerror = () => {
+      if (ws !== sock) return;
+      err.textContent = 'connection failed';
+    };
 
-    ws.onclose = () => {
-      clearInterval(ping);
+    sock.onclose = () => {
+      if (ws !== sock) return;
+
+      isConnecting = false;
+      setButtonsDisabled(false);
+
       addSystemLine('--- disconnected ---');
       document.getElementById('m').disabled = true;
       document.getElementById('sb').disabled = true;
+
+      safeClose();
     };
   }
 
@@ -146,6 +201,8 @@
 
     if (d.type === 'error') {
       err.textContent = d.reason || 'error';
+      isConnecting = false;
+      setButtonsDisabled(false);
       return;
     }
 
@@ -153,16 +210,17 @@
       me = d.username;
       myVerified = !!d.verified;
 
+      isConnecting = false;
+      setButtonsDisabled(false);
+      err.textContent = '';
+
       document.getElementById('login').style.display = 'none';
       document.getElementById('chat').style.display = '';
       document.getElementById('m').disabled = false;
       document.getElementById('sb').disabled = false;
       document.getElementById('m').focus();
 
-      // render history
       (d.history || []).forEach(renderMsg);
-
-      // user list
       renderUsers(d.users || []);
 
       addSystemLine('--- connected as ' + me + (myVerified ? ' ✅' : '') + ' ---');
@@ -185,7 +243,6 @@
     const el = document.getElementById('users');
     if (!users.length) { el.textContent = '(none)'; return; }
 
-    // Display: name + blue check if verified
     el.textContent = '';
     users.forEach((u, i) => {
       const span = document.createElement('span');
@@ -253,7 +310,7 @@
   function send() {
     const inp = document.getElementById('m');
     const text = inp.value.trim();
-    if (!text || !ws || ws.readyState !== 1) return;
+    if (!text || !ws || ws.readyState !== WebSocket.OPEN) return;
     ws.send(JSON.stringify({ type: 'message', text }));
     inp.value = '';
   }
@@ -287,7 +344,7 @@
 
   document.getElementById('m').addEventListener('keydown', e => {
     if (e.key === 'Enter') { send(); return; }
-    if (ws?.readyState === 1) ws.send(JSON.stringify({ type: 'typing' }));
+    if (ws?.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ type: 'typing' }));
   });
 </script>
 </body>
