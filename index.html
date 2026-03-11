@@ -66,6 +66,7 @@
   <div id="typers" style="font-size:11px; color:gray; height:16px"></div>
   <input id="m" style="width:400px" placeholder="message…" disabled>
   <button onclick="send()" id="sb" disabled>Send</button>
+  <button id="reconnectBtn" onclick="reloadChat()" style="display:none; margin-left:8px">Reconnect</button>
 </div>
 
 <hr>
@@ -78,9 +79,6 @@
 
   let ws = null, me = null, ping = null, myVerified = false;
   let isConnecting = false;
-  let reconnectTimer = null;
-  let lastJoinFn = null; // remembers how to rejoin on reconnect
-
   let typingUsers = new Set(), clearTimers = {};
 
   // ---- Dark mode ----
@@ -93,23 +91,6 @@
   applyDark(localStorage.getItem('darkMode') === '1');
   darkToggle.addEventListener('change', () => applyDark(darkToggle.checked));
 
-  // ---- Reconnect when tab becomes visible again ----
-  document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible' && me && (!ws || ws.readyState !== WebSocket.OPEN)) {
-      scheduleReconnect(0);
-    }
-  });
-
-  function scheduleReconnect(delay = 3000) {
-    clearTimeout(reconnectTimer);
-    if (!lastJoinFn) return;
-    reconnectTimer = setTimeout(() => {
-      if (!ws || ws.readyState === WebSocket.CLOSED || ws.readyState === WebSocket.CLOSING) {
-        connect(lastJoinFn, true);
-      }
-    }, delay);
-  }
-
   function setButtonsDisabled(disabled) {
     document.getElementById('u').disabled = disabled;
     document.getElementById('p').disabled = disabled;
@@ -118,24 +99,20 @@
 
   function safeClose() {
     clearInterval(ping); ping = null;
-    clearTimeout(reconnectTimer); reconnectTimer = null;
     for (const k in clearTimers) { clearTimeout(clearTimers[k]); delete clearTimers[k]; }
     typingUsers.clear(); updateTyping();
     if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) {
-      try { ws.close(1000, 'reconnect'); } catch {}
+      try { ws.close(1000, 'done'); } catch {}
     }
     ws = null;
   }
 
-  function connect(onOpenSend, isReconnect = false) {
+  function connect(onOpenSend) {
     if (isConnecting) return;
     isConnecting = true;
-    if (!isReconnect) safeClose();
-
-    if (!isReconnect) {
-      document.getElementById('err').textContent = 'connecting...';
-      setButtonsDisabled(true);
-    }
+    safeClose();
+    document.getElementById('err').textContent = 'connecting...';
+    setButtonsDisabled(true);
 
     const sock = new WebSocket(SERVER);
     ws = sock;
@@ -151,12 +128,12 @@
     sock.onmessage = e => {
       if (ws !== sock) return;
       let d; try { d = JSON.parse(e.data); } catch { return; }
-      handle(d, isReconnect);
+      handle(d);
     };
 
     sock.onerror = () => {
       if (ws !== sock) return;
-      if (!isReconnect) document.getElementById('err').textContent = 'connection failed';
+      document.getElementById('err').textContent = 'connection failed';
     };
 
     sock.onclose = () => {
@@ -164,18 +141,11 @@
       isConnecting = false;
       clearInterval(ping); ping = null;
       ws = null;
-      if (!isReconnect) setButtonsDisabled(false);
-
-      if (me && lastJoinFn) {
-        document.getElementById('m').disabled = true;
-        document.getElementById('sb').disabled = true;
-        addSystemLine('--- disconnected, reconnecting in 3s... ---');
-        scheduleReconnect(3000);
-      } else {
-        addSystemLine('--- disconnected ---');
-        document.getElementById('m').disabled = true;
-        document.getElementById('sb').disabled = true;
-      }
+      setButtonsDisabled(false);
+      document.getElementById('m').disabled = true;
+      document.getElementById('sb').disabled = true;
+      document.getElementById('reconnectBtn').style.display = '';
+      addSystemLine('--- disconnected ---');
     };
   }
 
@@ -183,8 +153,7 @@
     const u = document.getElementById('u').value.trim();
     const err = document.getElementById('err');
     if (!u) { err.textContent = 'need a name'; return; }
-    lastJoinFn = () => ws.send(JSON.stringify({ type: 'join', username: u }));
-    connect(lastJoinFn);
+    connect(() => ws.send(JSON.stringify({ type: 'join', username: u })));
   }
 
   function doRegister() {
@@ -193,8 +162,7 @@
     const err = document.getElementById('err');
     if (!u) { err.textContent = 'need a name'; return; }
     if (!p || p.trim().length < 3) { err.textContent = 'password must be at least 3 characters'; return; }
-    lastJoinFn = () => ws.send(JSON.stringify({ type: 'register', username: u, password: p }));
-    connect(lastJoinFn);
+    connect(() => ws.send(JSON.stringify({ type: 'register', username: u, password: p })));
   }
 
   function doLogin() {
@@ -203,18 +171,25 @@
     const err = document.getElementById('err');
     if (!u) { err.textContent = 'need a name'; return; }
     if (!p) { err.textContent = 'need password to login'; return; }
-    lastJoinFn = () => ws.send(JSON.stringify({ type: 'login', username: u, password: p }));
-    connect(lastJoinFn);
+    connect(() => ws.send(JSON.stringify({ type: 'login', username: u, password: p })));
   }
 
-  function handle(d, isReconnect) {
+  function reloadChat() {
+    me = null; myVerified = false;
+    document.getElementById('chat').style.display = 'none';
+    document.getElementById('login').style.display = '';
+    document.getElementById('reconnectBtn').style.display = 'none';
+    document.getElementById('msgs').innerHTML = '';
+    document.getElementById('err').textContent = '';
+  }
+
+  function handle(d) {
     const err = document.getElementById('err');
 
     if (d.type === 'error') {
       err.textContent = d.reason || 'error';
       isConnecting = false;
       setButtonsDisabled(false);
-      lastJoinFn = null; // don't auto-reconnect on auth errors
       return;
     }
 
@@ -227,16 +202,13 @@
 
       document.getElementById('login').style.display = 'none';
       document.getElementById('chat').style.display = '';
+      document.getElementById('reconnectBtn').style.display = 'none';
       document.getElementById('m').disabled = false;
       document.getElementById('sb').disabled = false;
       document.getElementById('m').focus();
 
-      if (isReconnect) {
-        addSystemLine('--- reconnected ---');
-      } else {
-        (d.history || []).forEach(renderMsg);
-        addSystemLine('--- connected as ' + me + (myVerified ? ' ✅' : '') + ' ---');
-      }
+      (d.history || []).forEach(renderMsg);
+      addSystemLine('--- connected as ' + me + (myVerified ? ' ✅' : '') + ' ---');
       renderUsers(d.users || []);
 
     } else if (d.type === 'message')  { renderMsg(d);
