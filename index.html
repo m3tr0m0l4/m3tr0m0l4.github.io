@@ -130,7 +130,7 @@
   function connect(onOpenSend, isReconnect = false) {
     if (isConnecting) return;
     isConnecting = true;
-    safeClose();
+    if (!isReconnect) safeClose();
 
     if (!isReconnect) {
       document.getElementById('err').textContent = 'connecting...';
@@ -162,9 +162,11 @@
     sock.onclose = () => {
       if (ws !== sock) return;
       isConnecting = false;
+      clearInterval(ping); ping = null;
+      ws = null;
       if (!isReconnect) setButtonsDisabled(false);
 
-      if (me) {
+      if (me && lastJoinFn) {
         document.getElementById('m').disabled = true;
         document.getElementById('sb').disabled = true;
         addSystemLine('--- disconnected, reconnecting in 3s... ---');
