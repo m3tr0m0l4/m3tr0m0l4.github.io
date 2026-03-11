@@ -1,4 +1,3 @@
-<!-- index.html -->
 <!doctype html>
 <html>
 <head>
@@ -6,7 +5,6 @@
   <title>Unblocked Library</title>
   <link rel="icon" type="image/svg" href="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Gmail_icon_%282020%29.svg/960px-Gmail_icon_%282020%29.svg.png?20221017173631">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-
   <style>
     body.dark { background: #0b0f14; color: #e6edf3; }
     body.dark a { color: #8ab4ff; }
@@ -50,12 +48,9 @@
 <b>Chat</b><br>
 
 <div id="login">
-  Name: <input id="u" maxlength="20" autocomplete="nickname">
-  Password (optional): <input id="p" type="password" maxlength="40" autocomplete="current-password">
-  <button onclick="joinGuest()">Join as Guest</button>
-  <button onclick="doRegister()">Register</button>
-  <button onclick="doLogin()">Login</button>
-  <span id="err" style="color:red; margin-left:8px"></span>
+  Name: <input id="u" maxlength="20">
+  <button onclick="connect()">Connect</button>
+  <span id="err" style="color:red"></span>
 </div>
 
 <div id="chat" style="display:none">
@@ -77,11 +72,10 @@
 <script>
   const SERVER = 'wss://archivezip--JacobMola.replit.app';
 
-  let ws = null, me = null, ping = null, myVerified = false;
+  let ws = null, me = null, ping = null;
   let isConnecting = false;
   let typingUsers = new Set(), clearTimers = {};
 
-  // ---- Dark mode ----
   const darkToggle = document.getElementById('darkToggle');
   function applyDark(on) {
     document.body.classList.toggle('dark', !!on);
@@ -91,57 +85,33 @@
   applyDark(localStorage.getItem('darkMode') === '1');
   darkToggle.addEventListener('change', () => applyDark(darkToggle.checked));
 
-  function setButtonsDisabled(disabled) {
-    document.getElementById('u').disabled = disabled;
-    document.getElementById('p').disabled = disabled;
-    document.querySelectorAll('#login button').forEach(b => b.disabled = disabled);
-  }
-
-  function safeClose() {
-    clearInterval(ping); ping = null;
-    for (const k in clearTimers) { clearTimeout(clearTimers[k]); delete clearTimers[k]; }
-    typingUsers.clear(); updateTyping();
-    if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) {
-      try { ws.close(1000, 'done'); } catch {}
-    }
-    ws = null;
-  }
-
-  function connect(onOpenSend) {
+  function connect() {
+    const u = document.getElementById('u').value.trim();
+    const err = document.getElementById('err');
+    if (!u) { err.textContent = 'need a name'; return; }
     if (isConnecting) return;
     isConnecting = true;
-    safeClose();
-    document.getElementById('err').textContent = 'connecting...';
-    setButtonsDisabled(true);
+    err.textContent = 'connecting...';
 
-    const sock = new WebSocket(SERVER);
-    ws = sock;
+    ws = new WebSocket(SERVER);
 
-    sock.onopen = () => {
-      if (ws !== sock) return;
-      onOpenSend();
+    ws.onopen = () => {
+      ws.send(JSON.stringify({ type: 'join', username: u }));
       ping = setInterval(() => {
         if (ws && ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ type: 'ping' }));
       }, 25000);
     };
 
-    sock.onmessage = e => {
-      if (ws !== sock) return;
+    ws.onmessage = e => {
       let d; try { d = JSON.parse(e.data); } catch { return; }
       handle(d);
     };
 
-    sock.onerror = () => {
-      if (ws !== sock) return;
-      document.getElementById('err').textContent = 'connection failed';
-    };
+    ws.onerror = () => { err.textContent = 'connection failed'; isConnecting = false; };
 
-    sock.onclose = () => {
-      if (ws !== sock) return;
+    ws.onclose = () => {
       isConnecting = false;
-      clearInterval(ping); ping = null;
-      ws = null;
-      setButtonsDisabled(false);
+      clearInterval(ping); ping = null; ws = null;
       document.getElementById('m').disabled = true;
       document.getElementById('sb').disabled = true;
       document.getElementById('reconnectBtn').style.display = '';
@@ -149,33 +119,8 @@
     };
   }
 
-  function joinGuest() {
-    const u = document.getElementById('u').value.trim();
-    const err = document.getElementById('err');
-    if (!u) { err.textContent = 'need a name'; return; }
-    connect(() => ws.send(JSON.stringify({ type: 'join', username: u })));
-  }
-
-  function doRegister() {
-    const u = document.getElementById('u').value.trim();
-    const p = document.getElementById('p').value;
-    const err = document.getElementById('err');
-    if (!u) { err.textContent = 'need a name'; return; }
-    if (!p || p.trim().length < 3) { err.textContent = 'password must be at least 3 characters'; return; }
-    connect(() => ws.send(JSON.stringify({ type: 'register', username: u, password: p })));
-  }
-
-  function doLogin() {
-    const u = document.getElementById('u').value.trim();
-    const p = document.getElementById('p').value;
-    const err = document.getElementById('err');
-    if (!u) { err.textContent = 'need a name'; return; }
-    if (!p) { err.textContent = 'need password to login'; return; }
-    connect(() => ws.send(JSON.stringify({ type: 'login', username: u, password: p })));
-  }
-
   function reloadChat() {
-    me = null; myVerified = false;
+    me = null;
     document.getElementById('chat').style.display = 'none';
     document.getElementById('login').style.display = '';
     document.getElementById('reconnectBtn').style.display = 'none';
@@ -189,27 +134,21 @@
     if (d.type === 'error') {
       err.textContent = d.reason || 'error';
       isConnecting = false;
-      setButtonsDisabled(false);
       return;
     }
 
     if (d.type === 'welcome') {
       me = d.username;
-      myVerified = !!d.verified;
       isConnecting = false;
-      setButtonsDisabled(false);
       err.textContent = '';
-
       document.getElementById('login').style.display = 'none';
       document.getElementById('chat').style.display = '';
-      document.getElementById('reconnectBtn').style.display = 'none';
       document.getElementById('m').disabled = false;
       document.getElementById('sb').disabled = false;
       document.getElementById('m').focus();
-
       (d.history || []).forEach(renderMsg);
-      addSystemLine('--- connected as ' + me + (myVerified ? ' ✅' : '') + ' ---');
       renderUsers(d.users || []);
+      addSystemLine('--- connected as ' + me + ' ---');
 
     } else if (d.type === 'message')  { renderMsg(d);
     } else if (d.type === 'system')   { addSystemLine('--- ' + d.text + ' ---');
@@ -221,32 +160,13 @@
   function renderUsers(users) {
     const el = document.getElementById('users');
     if (!users.length) { el.textContent = '(none)'; return; }
-    el.textContent = '';
-    users.forEach((u, i) => {
-      const span = document.createElement('span');
-      span.textContent = u.username;
-      el.appendChild(span);
-      if (u.verified) {
-        const check = document.createElement('span');
-        check.textContent = ' ✓'; check.style.color = '#1d4ed8'; check.style.fontWeight = 'bold';
-        el.appendChild(check);
-      }
-      if (i !== users.length - 1) el.appendChild(document.createTextNode(', '));
-    });
+    el.textContent = users.map(u => u.username).join(', ');
   }
 
   function renderMsg(m) {
     const t = new Date(m.timestamp).toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
     const line = document.createElement('div');
-    const time = document.createElement('span'); time.textContent = `[${t}] `; line.appendChild(time);
-    const name = document.createElement('span'); name.textContent = m.username; line.appendChild(name);
-    if (m.verified) {
-      const check = document.createElement('span');
-      check.textContent = ' ✓'; check.style.color = '#1d4ed8'; check.style.fontWeight = 'bold';
-      line.appendChild(check);
-    }
-    const sep = document.createElement('span'); sep.textContent = ': '; line.appendChild(sep);
-    const msg = document.createElement('span'); msg.textContent = m.text; line.appendChild(msg);
+    line.textContent = `[${t}] ${m.username}: ${m.text}`;
     addNode(line);
   }
 
@@ -283,8 +203,7 @@
     document.getElementById('typers').textContent = names.length ? names.join(', ') + ' typing...' : '';
   }
 
-  document.getElementById('u').addEventListener('keydown', e => { if (e.key === 'Enter') joinGuest(); });
-  document.getElementById('p').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+  document.getElementById('u').addEventListener('keydown', e => { if (e.key === 'Enter') connect(); });
   document.getElementById('m').addEventListener('keydown', e => {
     if (e.key === 'Enter') { send(); return; }
     if (ws?.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ type: 'typing' }));
