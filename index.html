@@ -7,18 +7,10 @@
   <link rel="icon" type="image/svg" href="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Gmail_icon_%282020%29.svg/960px-Gmail_icon_%282020%29.svg.png?20221017173631">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- Minimal dark mode CSS only -->
   <style>
-    body.dark {
-      background: #0b0f14;
-      color: #e6edf3;
-    }
+    body.dark { background: #0b0f14; color: #e6edf3; }
     body.dark a { color: #8ab4ff; }
-    body.dark input, body.dark button {
-      background: #111823;
-      color: #e6edf3;
-      border: 1px solid #2a3441;
-    }
+    body.dark input, body.dark button { background: #111823; color: #e6edf3; border: 1px solid #2a3441; }
     body.dark hr { border-color: #2a3441; }
     body.dark #msgs { border-color: #2a3441 !important; }
   </style>
@@ -29,16 +21,8 @@
 <p>Linewize is annoying. Here is a website for unblocked resources.</p>
 
 <b><br>!!! NEW !!! BYPASS ANYTHING (experimental! some sites may be broken and the successfulness against blocking has not yet been fully tested!)<br></b>
-<button
-  onclick="window.open('https://scramjet-app--m3tr0m0l4dev12.replit.app', '_blank')"
-  style="width: 250px; white-space: nowrap;">
-  Scramjet Proxy
-</button>
-<button
-  onclick="window.open('/proxy-tips/', '_blank')"
-  style="width: 250px; white-space: nowrap;">
-  Tips and tricks for using Scramjet
-</button>
+<button onclick="window.open('https://scramjet-app--m3tr0m0l4dev12.replit.app', '_blank')" style="width: 250px; white-space: nowrap;">Scramjet Proxy</button>
+<button onclick="window.open('/proxy-tips/', '_blank')" style="width: 250px; white-space: nowrap;">Tips and tricks for using Scramjet</button>
 
 <b><br>Arcade emulator<br></b>
 <button onclick="window.open('/arcade-loading-page/', '_blank')" style="width: 250px; white-space: nowrap;">Tutorial</button>
@@ -78,119 +62,118 @@
   <div style="margin:6px 0; font-family:monospace; font-size:12px;">
     Users online: <span id="users">(loading)</span>
   </div>
-
   <div id="msgs" style="height:200px; overflow-y:auto; border:1px solid #ccc; padding:4px; font-family:monospace; font-size:13px; margin-top:6px"></div>
   <div id="typers" style="font-size:11px; color:gray; height:16px"></div>
-
   <input id="m" style="width:400px" placeholder="message…" disabled>
   <button onclick="send()" id="sb" disabled>Send</button>
 </div>
 
-<!-- Bare-bones dark mode toggle at bottom -->
 <hr>
 <div style="margin-top:10px;">
-  <label>
-    <input type="checkbox" id="darkToggle">
-    dark mode
-  </label>
+  <label><input type="checkbox" id="darkToggle"> dark mode</label>
 </div>
 
 <script>
-  // IMPORTANT: must be ws:// or wss:// (not https://)
   const SERVER = 'wss://archivezip--JacobMola.replit.app';
 
   let ws = null, me = null, ping = null, myVerified = false;
   let isConnecting = false;
+  let reconnectTimer = null;
+  let lastJoinFn = null; // remembers how to rejoin on reconnect
 
   let typingUsers = new Set(), clearTimers = {};
 
-  // ---- Dark mode (persisted) ----
+  // ---- Dark mode ----
   const darkToggle = document.getElementById('darkToggle');
-
   function applyDark(on) {
     document.body.classList.toggle('dark', !!on);
     localStorage.setItem('darkMode', on ? '1' : '0');
     darkToggle.checked = !!on;
   }
-
   applyDark(localStorage.getItem('darkMode') === '1');
   darkToggle.addEventListener('change', () => applyDark(darkToggle.checked));
-  // -------------------------------
+
+  // ---- Reconnect when tab becomes visible again ----
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && me && (!ws || ws.readyState !== WebSocket.OPEN)) {
+      scheduleReconnect(0);
+    }
+  });
+
+  function scheduleReconnect(delay = 3000) {
+    clearTimeout(reconnectTimer);
+    if (!lastJoinFn) return;
+    reconnectTimer = setTimeout(() => {
+      if (!ws || ws.readyState === WebSocket.CLOSED || ws.readyState === WebSocket.CLOSING) {
+        connect(lastJoinFn, true);
+      }
+    }, delay);
+  }
 
   function setButtonsDisabled(disabled) {
-    const u = document.getElementById('u');
-    const p = document.getElementById('p');
-    const buttons = document.querySelectorAll('#login button');
-    if (u) u.disabled = disabled;
-    if (p) p.disabled = disabled;
-    buttons.forEach(b => b.disabled = disabled);
+    document.getElementById('u').disabled = disabled;
+    document.getElementById('p').disabled = disabled;
+    document.querySelectorAll('#login button').forEach(b => b.disabled = disabled);
   }
 
   function safeClose() {
-    try { if (ping) clearInterval(ping); } catch {}
-    ping = null;
-
-    for (const k in clearTimers) {
-      try { clearTimeout(clearTimers[k]); } catch {}
-      delete clearTimers[k];
-    }
-    typingUsers.clear();
-    updateTyping();
-
+    clearInterval(ping); ping = null;
+    clearTimeout(reconnectTimer); reconnectTimer = null;
+    for (const k in clearTimers) { clearTimeout(clearTimers[k]); delete clearTimers[k]; }
+    typingUsers.clear(); updateTyping();
     if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) {
       try { ws.close(1000, 'reconnect'); } catch {}
     }
     ws = null;
   }
 
-  function connect(onOpenSend) {
-    const err = document.getElementById('err');
+  function connect(onOpenSend, isReconnect = false) {
     if (isConnecting) return;
     isConnecting = true;
-
     safeClose();
 
-    err.textContent = 'connecting...';
-    setButtonsDisabled(true);
+    if (!isReconnect) {
+      document.getElementById('err').textContent = 'connecting...';
+      setButtonsDisabled(true);
+    }
 
     const sock = new WebSocket(SERVER);
     ws = sock;
 
     sock.onopen = () => {
       if (ws !== sock) return;
-
       onOpenSend();
-
       ping = setInterval(() => {
-        if (ws && ws.readyState === WebSocket.OPEN) {
-          ws.send(JSON.stringify({ type: 'ping' }));
-        }
-      }, 30000);
+        if (ws && ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ type: 'ping' }));
+      }, 25000);
     };
 
     sock.onmessage = e => {
       if (ws !== sock) return;
-      let d;
-      try { d = JSON.parse(e.data); } catch { return; }
-      handle(d);
+      let d; try { d = JSON.parse(e.data); } catch { return; }
+      handle(d, isReconnect);
     };
 
     sock.onerror = () => {
       if (ws !== sock) return;
-      err.textContent = 'connection failed';
+      if (!isReconnect) document.getElementById('err').textContent = 'connection failed';
     };
 
     sock.onclose = () => {
       if (ws !== sock) return;
-
       isConnecting = false;
-      setButtonsDisabled(false);
+      if (!isReconnect) setButtonsDisabled(false);
 
-      addSystemLine('--- disconnected ---');
-      document.getElementById('m').disabled = true;
-      document.getElementById('sb').disabled = true;
-
-      safeClose();
+      if (me) {
+        document.getElementById('m').disabled = true;
+        document.getElementById('sb').disabled = true;
+        addSystemLine('--- disconnected, reconnecting in 3s... ---');
+        scheduleReconnect(3000);
+      } else {
+        addSystemLine('--- disconnected ---');
+        document.getElementById('m').disabled = true;
+        document.getElementById('sb').disabled = true;
+      }
     };
   }
 
@@ -198,52 +181,44 @@
     const u = document.getElementById('u').value.trim();
     const err = document.getElementById('err');
     if (!u) { err.textContent = 'need a name'; return; }
-
-    connect(() => {
-      ws.send(JSON.stringify({ type: 'join', username: u }));
-    });
+    lastJoinFn = () => ws.send(JSON.stringify({ type: 'join', username: u }));
+    connect(lastJoinFn);
   }
 
   function doRegister() {
     const u = document.getElementById('u').value.trim();
     const p = document.getElementById('p').value;
     const err = document.getElementById('err');
-
     if (!u) { err.textContent = 'need a name'; return; }
     if (!p || p.trim().length < 3) { err.textContent = 'password must be at least 3 characters'; return; }
-
-    connect(() => {
-      ws.send(JSON.stringify({ type: 'register', username: u, password: p }));
-    });
+    lastJoinFn = () => ws.send(JSON.stringify({ type: 'register', username: u, password: p }));
+    connect(lastJoinFn);
   }
 
   function doLogin() {
     const u = document.getElementById('u').value.trim();
     const p = document.getElementById('p').value;
     const err = document.getElementById('err');
-
     if (!u) { err.textContent = 'need a name'; return; }
     if (!p) { err.textContent = 'need password to login'; return; }
-
-    connect(() => {
-      ws.send(JSON.stringify({ type: 'login', username: u, password: p }));
-    });
+    lastJoinFn = () => ws.send(JSON.stringify({ type: 'login', username: u, password: p }));
+    connect(lastJoinFn);
   }
 
-  function handle(d) {
+  function handle(d, isReconnect) {
     const err = document.getElementById('err');
 
     if (d.type === 'error') {
       err.textContent = d.reason || 'error';
       isConnecting = false;
       setButtonsDisabled(false);
+      lastJoinFn = null; // don't auto-reconnect on auth errors
       return;
     }
 
     if (d.type === 'welcome') {
       me = d.username;
       myVerified = !!d.verified;
-
       isConnecting = false;
       setButtonsDisabled(false);
       err.textContent = '';
@@ -254,78 +229,50 @@
       document.getElementById('sb').disabled = false;
       document.getElementById('m').focus();
 
-      (d.history || []).forEach(renderMsg);
+      if (isReconnect) {
+        addSystemLine('--- reconnected ---');
+      } else {
+        (d.history || []).forEach(renderMsg);
+        addSystemLine('--- connected as ' + me + (myVerified ? ' ✅' : '') + ' ---');
+      }
       renderUsers(d.users || []);
 
-      addSystemLine('--- connected as ' + me + (myVerified ? ' ✅' : '') + ' ---');
-
-    } else if (d.type === 'message') {
-      renderMsg(d);
-
-    } else if (d.type === 'system') {
-      addSystemLine('--- ' + d.text + ' ---');
-
-    } else if (d.type === 'typing') {
-      showTyping(d.username);
-
-    } else if (d.type === 'userlist') {
-      renderUsers(d.users || []);
+    } else if (d.type === 'message')  { renderMsg(d);
+    } else if (d.type === 'system')   { addSystemLine('--- ' + d.text + ' ---');
+    } else if (d.type === 'typing')   { showTyping(d.username);
+    } else if (d.type === 'userlist') { renderUsers(d.users || []);
     }
   }
 
   function renderUsers(users) {
     const el = document.getElementById('users');
     if (!users.length) { el.textContent = '(none)'; return; }
-
     el.textContent = '';
     users.forEach((u, i) => {
       const span = document.createElement('span');
       span.textContent = u.username;
       el.appendChild(span);
-
       if (u.verified) {
         const check = document.createElement('span');
-        check.textContent = ' ✓';
-        check.style.color = '#1d4ed8';
-        check.style.fontWeight = 'bold';
+        check.textContent = ' ✓'; check.style.color = '#1d4ed8'; check.style.fontWeight = 'bold';
         el.appendChild(check);
       }
-
       if (i !== users.length - 1) el.appendChild(document.createTextNode(', '));
     });
   }
 
   function renderMsg(m) {
-    const t = new Date(m.timestamp).toLocaleTimeString('en-US', {
-      hour12: false, hour: '2-digit', minute: '2-digit'
-    });
-
+    const t = new Date(m.timestamp).toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
     const line = document.createElement('div');
-
-    const time = document.createElement('span');
-    time.textContent = `[${t}] `;
-    line.appendChild(time);
-
-    const name = document.createElement('span');
-    name.textContent = m.username;
-    line.appendChild(name);
-
+    const time = document.createElement('span'); time.textContent = `[${t}] `; line.appendChild(time);
+    const name = document.createElement('span'); name.textContent = m.username; line.appendChild(name);
     if (m.verified) {
       const check = document.createElement('span');
-      check.textContent = ' ✓';
-      check.style.color = '#1d4ed8';
-      check.style.fontWeight = 'bold';
+      check.textContent = ' ✓'; check.style.color = '#1d4ed8'; check.style.fontWeight = 'bold';
       line.appendChild(check);
     }
-
-    const sep = document.createElement('span');
-    sep.textContent = ': ';
-    line.appendChild(sep);
-
-    const msg = document.createElement('span');
-    msg.textContent = m.text;
-    line.appendChild(msg);
-
+    const sep = document.createElement('span'); sep.textContent = ': '; line.appendChild(sep);
+    const msg = document.createElement('span'); msg.textContent = m.text; line.appendChild(msg);
     addNode(line);
   }
 
@@ -353,28 +300,17 @@
     if (!username) return;
     typingUsers.add(username);
     updateTyping();
-
     clearTimeout(clearTimers[username]);
-    clearTimers[username] = setTimeout(() => {
-      typingUsers.delete(username);
-      updateTyping();
-    }, 2500);
+    clearTimers[username] = setTimeout(() => { typingUsers.delete(username); updateTyping(); }, 2500);
   }
 
   function updateTyping() {
     const names = [...typingUsers];
-    document.getElementById('typers').textContent =
-      names.length ? names.join(', ') + ' typing...' : '';
+    document.getElementById('typers').textContent = names.length ? names.join(', ') + ' typing...' : '';
   }
 
-  document.getElementById('u').addEventListener('keydown', e => {
-    if (e.key === 'Enter') joinGuest();
-  });
-
-  document.getElementById('p').addEventListener('keydown', e => {
-    if (e.key === 'Enter') doLogin();
-  });
-
+  document.getElementById('u').addEventListener('keydown', e => { if (e.key === 'Enter') joinGuest(); });
+  document.getElementById('p').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
   document.getElementById('m').addEventListener('keydown', e => {
     if (e.key === 'Enter') { send(); return; }
     if (ws?.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ type: 'typing' }));
