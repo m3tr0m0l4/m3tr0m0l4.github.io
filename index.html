@@ -10,7 +10,23 @@
     body.dark a { color: #8ab4ff; }
     body.dark input, body.dark button { background: #111823; color: #e6edf3; border: 1px solid #2a3441; }
     body.dark hr { border-color: #2a3441; }
-    body.dark #msgs { border-color: #2a3441 !important; }
+    body.dark .msgs { border-color: #2a3441 !important; }
+
+    .chat-tab-buttons {
+      margin: 10px 0;
+    }
+
+    .chat-tab-buttons button {
+      margin-right: 8px;
+    }
+
+    .chat-tab {
+      display: none;
+    }
+
+    .chat-tab.active {
+      display: block;
+    }
   </style>
 </head>
 
@@ -47,21 +63,49 @@
 
 <b>Chat</b><br>
 
-<div id="login">
-  Name: <input id="u" maxlength="20">
-  <button onclick="connect()">Connect</button>
-  <span id="err" style="color:red"></span>
+<div class="chat-tab-buttons">
+  <button onclick="switchTab('chat1')">Chat 1</button>
+  <button onclick="switchTab('chat2')">Chat 2</button>
 </div>
 
-<div id="chat" style="display:none">
-  <div style="margin:6px 0; font-family:monospace; font-size:12px;">
-    Users online: <span id="users">(loading)</span>
+<div id="chat1" class="chat-tab active">
+  <h3>Chat 1</h3>
+  <div id="login1">
+    Name: <input id="u1" maxlength="20">
+    <button onclick="connectChat(chat1State)">Connect</button>
+    <span id="err1" style="color:red"></span>
   </div>
-  <div id="msgs" style="height:200px; overflow-y:auto; border:1px solid #ccc; padding:4px; font-family:monospace; font-size:13px; margin-top:6px"></div>
-  <div id="typers" style="font-size:11px; color:gray; height:16px"></div>
-  <input id="m" style="width:400px" placeholder="message…" disabled>
-  <button onclick="send()" id="sb" disabled>Send</button>
-  <button id="reconnectBtn" onclick="reloadChat()" style="display:none; margin-left:8px">Reconnect</button>
+
+  <div id="chatBox1" style="display:none">
+    <div style="margin:6px 0; font-family:monospace; font-size:12px;">
+      Users online: <span id="users1">(loading)</span>
+    </div>
+    <div id="msgs1" class="msgs" style="height:200px; overflow-y:auto; border:1px solid #ccc; padding:4px; font-family:monospace; font-size:13px; margin-top:6px"></div>
+    <div id="typers1" style="font-size:11px; color:gray; height:16px"></div>
+    <input id="m1" style="width:400px" placeholder="message…" disabled>
+    <button onclick="sendMessage(chat1State)" id="sb1" disabled>Send</button>
+    <button id="reconnectBtn1" onclick="reloadChat(chat1State)" style="display:none; margin-left:8px">Reconnect</button>
+  </div>
+</div>
+
+<div id="chat2" class="chat-tab">
+  <h3>Chat 2</h3>
+  <div id="login2">
+    Name: <input id="u2" maxlength="20">
+    <button onclick="connectChat(chat2State)">Connect</button>
+    <span id="err2" style="color:red"></span>
+  </div>
+
+  <div id="chatBox2" style="display:none">
+    <div style="margin:6px 0; font-family:monospace; font-size:12px;">
+      Users online: <span id="users2">(loading)</span>
+    </div>
+    <div id="msgs2" class="msgs" style="height:200px; overflow-y:auto; border:1px solid #ccc; padding:4px; font-family:monospace; font-size:13px; margin-top:6px"></div>
+    <div id="typers2" style="font-size:11px; color:gray; height:16px"></div>
+    <input id="m2" style="width:400px" placeholder="message…" disabled>
+    <button onclick="sendMessage(chat2State)" id="sb2" disabled>Send</button>
+    <button id="reconnectBtn2" onclick="reloadChat(chat2State)" style="display:none; margin-left:8px">Reconnect</button>
+  </div>
 </div>
 
 <hr>
@@ -70,11 +114,29 @@
 </div>
 
 <script>
-  const SERVER = 'wss://chat-server-production-14ad.up.railway.app';
+  const SERVER_1 = 'wss://chat-server-production-14ad.up.railway.app';
+  const SERVER_2 = 'wss://PUT-YOUR-SECOND-CHAT-LINK-HERE';
 
-  let ws = null, me = null, ping = null;
-  let isConnecting = false;
-  let typingUsers = new Set(), clearTimers = {};
+  const chat1State = makeChatState(1, SERVER_1);
+  const chat2State = makeChatState(2, SERVER_2);
+
+  function makeChatState(id, server) {
+    return {
+      id,
+      server,
+      ws: null,
+      me: null,
+      ping: null,
+      isConnecting: false,
+      typingUsers: new Set(),
+      clearTimers: {}
+    };
+  }
+
+  function switchTab(tabId) {
+    document.querySelectorAll('.chat-tab').forEach(tab => tab.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+  }
 
   const darkToggle = document.getElementById('darkToggle');
   function applyDark(on) {
@@ -85,128 +147,185 @@
   applyDark(localStorage.getItem('darkMode') === '1');
   darkToggle.addEventListener('change', () => applyDark(darkToggle.checked));
 
-  function connect() {
-    const u = document.getElementById('u').value.trim();
-    const err = document.getElementById('err');
-    if (!u) { err.textContent = 'need a name'; return; }
-    if (isConnecting) return;
-    isConnecting = true;
+  function connectChat(state) {
+    const u = document.getElementById('u' + state.id).value.trim();
+    const err = document.getElementById('err' + state.id);
+
+    if (!u) {
+      err.textContent = 'need a name';
+      return;
+    }
+    if (state.isConnecting) return;
+
+    state.isConnecting = true;
     err.textContent = 'connecting...';
 
-    ws = new WebSocket(SERVER);
+    state.ws = new WebSocket(state.server);
 
-    ws.onopen = () => {
-      ws.send(JSON.stringify({ type: 'join', username: u }));
-      ping = setInterval(() => {
-        if (ws && ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ type: 'ping' }));
+    state.ws.onopen = () => {
+      state.ws.send(JSON.stringify({ type: 'join', username: u }));
+      state.ping = setInterval(() => {
+        if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+          state.ws.send(JSON.stringify({ type: 'ping' }));
+        }
       }, 25000);
     };
 
-    ws.onmessage = e => {
-      let d; try { d = JSON.parse(e.data); } catch { return; }
-      handle(d);
+    state.ws.onmessage = e => {
+      let d;
+      try { d = JSON.parse(e.data); } catch { return; }
+      handleMessage(state, d);
     };
 
-    ws.onerror = () => { err.textContent = 'connection failed'; isConnecting = false; };
+    state.ws.onerror = () => {
+      err.textContent = 'connection failed';
+      state.isConnecting = false;
+    };
 
-    ws.onclose = () => {
-      isConnecting = false;
-      clearInterval(ping); ping = null; ws = null;
-      document.getElementById('m').disabled = true;
-      document.getElementById('sb').disabled = true;
-      document.getElementById('reconnectBtn').style.display = '';
-      addSystemLine('--- disconnected ---');
+    state.ws.onclose = () => {
+      state.isConnecting = false;
+      clearInterval(state.ping);
+      state.ping = null;
+      state.ws = null;
+
+      document.getElementById('m' + state.id).disabled = true;
+      document.getElementById('sb' + state.id).disabled = true;
+      document.getElementById('reconnectBtn' + state.id).style.display = '';
+      addSystemLine(state, '--- disconnected ---');
     };
   }
 
-  function reloadChat() {
-    me = null;
-    document.getElementById('chat').style.display = 'none';
-    document.getElementById('login').style.display = '';
-    document.getElementById('reconnectBtn').style.display = 'none';
-    document.getElementById('msgs').innerHTML = '';
-    document.getElementById('err').textContent = '';
+  function reloadChat(state) {
+    state.me = null;
+    document.getElementById('chatBox' + state.id).style.display = 'none';
+    document.getElementById('login' + state.id).style.display = '';
+    document.getElementById('reconnectBtn' + state.id).style.display = 'none';
+    document.getElementById('msgs' + state.id).innerHTML = '';
+    document.getElementById('err' + state.id).textContent = '';
   }
 
-  function handle(d) {
-    const err = document.getElementById('err');
+  function handleMessage(state, d) {
+    const err = document.getElementById('err' + state.id);
 
     if (d.type === 'error') {
       err.textContent = d.reason || 'error';
-      isConnecting = false;
+      state.isConnecting = false;
       return;
     }
 
     if (d.type === 'welcome') {
-      me = d.username;
-      isConnecting = false;
+      state.me = d.username;
+      state.isConnecting = false;
       err.textContent = '';
-      document.getElementById('login').style.display = 'none';
-      document.getElementById('chat').style.display = '';
-      document.getElementById('m').disabled = false;
-      document.getElementById('sb').disabled = false;
-      document.getElementById('m').focus();
-      (d.history || []).forEach(renderMsg);
-      renderUsers(d.users || []);
-      addSystemLine('--- connected as ' + me + ' ---');
 
-    } else if (d.type === 'message')  { renderMsg(d);
-    } else if (d.type === 'system')   { addSystemLine('--- ' + d.text + ' ---');
-    } else if (d.type === 'typing')   { showTyping(d.username);
-    } else if (d.type === 'userlist') { renderUsers(d.users || []);
+      document.getElementById('login' + state.id).style.display = 'none';
+      document.getElementById('chatBox' + state.id).style.display = '';
+      document.getElementById('m' + state.id).disabled = false;
+      document.getElementById('sb' + state.id).disabled = false;
+      document.getElementById('m' + state.id).focus();
+
+      (d.history || []).forEach(msg => renderMsg(state, msg));
+      renderUsers(state, d.users || []);
+      addSystemLine(state, '--- connected as ' + state.me + ' ---');
+
+    } else if (d.type === 'message') {
+      renderMsg(state, d);
+    } else if (d.type === 'system') {
+      addSystemLine(state, '--- ' + d.text + ' ---');
+    } else if (d.type === 'typing') {
+      showTyping(state, d.username);
+    } else if (d.type === 'userlist') {
+      renderUsers(state, d.users || []);
     }
   }
 
-  function renderUsers(users) {
-    const el = document.getElementById('users');
-    if (!users.length) { el.textContent = '(none)'; return; }
+  function renderUsers(state, users) {
+    const el = document.getElementById('users' + state.id);
+    if (!users.length) {
+      el.textContent = '(none)';
+      return;
+    }
     el.textContent = users.map(u => u.username).join(', ');
   }
 
-  function renderMsg(m) {
-    const t = new Date(m.timestamp).toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
+  function renderMsg(state, m) {
+    const t = new Date(m.timestamp).toLocaleTimeString('en-US', {
+      hour12: false,
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+
     const line = document.createElement('div');
     line.textContent = `[${t}] ${m.username}: ${m.text}`;
-    addNode(line);
+    addNode(state, line);
   }
 
-  function addSystemLine(text) {
+  function addSystemLine(state, text) {
     const line = document.createElement('div');
     line.textContent = text;
-    addNode(line);
+    addNode(state, line);
   }
 
-  function addNode(node) {
-    const msgs = document.getElementById('msgs');
+  function addNode(state, node) {
+    const msgs = document.getElementById('msgs' + state.id);
     msgs.appendChild(node);
     msgs.scrollTop = msgs.scrollHeight;
   }
 
-  function send() {
-    const inp = document.getElementById('m');
+  function sendMessage(state) {
+    const inp = document.getElementById('m' + state.id);
     const text = inp.value.trim();
-    if (!text || !ws || ws.readyState !== WebSocket.OPEN) return;
-    ws.send(JSON.stringify({ type: 'message', text }));
+    if (!text || !state.ws || state.ws.readyState !== WebSocket.OPEN) return;
+
+    state.ws.send(JSON.stringify({ type: 'message', text }));
     inp.value = '';
   }
 
-  function showTyping(username) {
+  function showTyping(state, username) {
     if (!username) return;
-    typingUsers.add(username);
-    updateTyping();
-    clearTimeout(clearTimers[username]);
-    clearTimers[username] = setTimeout(() => { typingUsers.delete(username); updateTyping(); }, 2500);
+
+    state.typingUsers.add(username);
+    updateTyping(state);
+
+    clearTimeout(state.clearTimers[username]);
+    state.clearTimers[username] = setTimeout(() => {
+      state.typingUsers.delete(username);
+      updateTyping(state);
+    }, 2500);
   }
 
-  function updateTyping() {
-    const names = [...typingUsers];
-    document.getElementById('typers').textContent = names.length ? names.join(', ') + ' typing...' : '';
+  function updateTyping(state) {
+    const names = [...state.typingUsers];
+    document.getElementById('typers' + state.id).textContent =
+      names.length ? names.join(', ') + ' typing...' : '';
   }
 
-  document.getElementById('u').addEventListener('keydown', e => { if (e.key === 'Enter') connect(); });
-  document.getElementById('m').addEventListener('keydown', e => {
-    if (e.key === 'Enter') { send(); return; }
-    if (ws?.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ type: 'typing' }));
+  document.getElementById('u1').addEventListener('keydown', e => {
+    if (e.key === 'Enter') connectChat(chat1State);
+  });
+
+  document.getElementById('u2').addEventListener('keydown', e => {
+    if (e.key === 'Enter') connectChat(chat2State);
+  });
+
+  document.getElementById('m1').addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      sendMessage(chat1State);
+      return;
+    }
+    if (chat1State.ws?.readyState === WebSocket.OPEN) {
+      chat1State.ws.send(JSON.stringify({ type: 'typing' }));
+    }
+  });
+
+  document.getElementById('m2').addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      sendMessage(chat2State);
+      return;
+    }
+    if (chat2State.ws?.readyState === WebSocket.OPEN) {
+      chat2State.ws.send(JSON.stringify({ type: 'typing' }));
+    }
   });
 </script>
 </body>
