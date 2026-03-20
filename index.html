@@ -7,7 +7,12 @@
   <title>Unblocked Library</title>
 
   <style>
-    body { margin: 10px; line-height: 1.25; max-width: none; }
+    body {
+      margin: 10px;
+      max-width: none;
+      line-height: 1.25;
+    }
+
     body.dark { background: #0b0f14; color: #e6edf3; }
     body.dark a { color: #8ab4ff; }
     body.dark input,
@@ -23,9 +28,24 @@
     h2 { margin: 6px 0 4px; font-size: 24px; }
     h3 { margin: 8px 0 2px; font-size: 18px; }
 
-    .news-item { border: 1px solid #ccc; padding: 6px 8px; margin-top: 6px; }
-    body.dark .news-item { border-color: #2a3441; background: #111823; }
+    #lastUpdated {
+      font-size: 12px;
+      opacity: 0.7;
+      margin-bottom: 6px;
+    }
 
+    .news-item {
+      border: 1px solid #ccc;
+      padding: 6px 8px;
+      margin-top: 6px;
+    }
+
+    body.dark .news-item {
+      border-color: #2a3441;
+      background: #111823;
+    }
+
+    /* status */
     .status-online { color: #2ecc71; }
     .status-offline { color: #e74c3c; }
     .status-unstable { color: #f1c40f; }
@@ -34,11 +54,12 @@
     body.dark .status-offline { color: #ff6b6b; }
     body.dark .status-unstable { color: #ffd93d; }
 
-    #lastUpdated {
-      text-align: left;
-      font-size: 12px;
-      opacity: 0.7;
-      margin-bottom: 6px;
+    /* vertical links fix */
+    #quickLinks a,
+    #proxyLinks a,
+    #gameList a {
+      display: block;
+      margin: 2px 0;
     }
   </style>
 </head>
@@ -51,7 +72,13 @@
 <label><input type="checkbox" id="themeToggle"> dark mode</label>
 
 <div class="tabs">
-<button data-tab="about">home</button><button data-tab="proxy">proxy</button><button data-tab="arcade">arcade</button><button data-tab="flash">flash</button><button data-tab="html5">html5</button><button data-tab="chat">chat</button><button data-tab="requests">requests & faq</button>
+<button data-tab="about">home</button>
+<button data-tab="proxy">proxy</button>
+<button data-tab="arcade">arcade</button>
+<button data-tab="flash">flash</button>
+<button data-tab="html5">html5</button>
+<button data-tab="chat">chat</button>
+<button data-tab="requests">requests & faq</button>
 </div>
 
 <!-- HOME -->
@@ -76,7 +103,26 @@
 <div id="proxyLinks">(loading)</div>
 
 <h2>proxy tips and limitations</h2>
-<p>this page is dedicated to logging some notable limitations and uses of the proxy. note that any links should be accessed within the proxy.</p>
+
+<p>this page is dedicated to logging some notable limitations and uses of the proxy.  
+note that any links given, unless otherwise mentioned, should not be directly clicked,  
+and instead should be accessed within the proxy<br><br></p>
+
+<h3>useful sites that are unblocked!</h3>
+<ul>
+<li><b>internet archive (archive.org)</b> -- incredibly useful for finding books, webpage archives, movies; basically anything you can think of</li>
+<li><b>social media</b> -- instagram and tiktok are completely unblocked as far as I can tell</li>
+<li><b>duckduckgo</b> -- works better than google (no captchas)</li>
+</ul>
+
+<h3>tips</h3>
+<ul>
+<li><b>layer it</b> -- use virtual browsers if blocked</li>
+<li><b>remember your info</b></li>
+<li><b>don't be an idiot</b></li>
+</ul>
+
+<p>if the proxy doesn't work at all, sorry. if it does, have fun</p>
 
 </div>
 
@@ -198,7 +244,6 @@ fetch('/content/games.json')
     a.href=g.href;
     a.textContent=g.label;
     el.appendChild(a);
-    el.appendChild(document.createElement('br'));
   });
 });
 
