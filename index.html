@@ -61,8 +61,8 @@
   <div id="about" class="tab active">
     <div class="home-block">
       <h2>status</h2>
-      <div class="status-line"><b>proxy:</b> <span id="proxyStatus" class="status-offline">checking...</span></div>
-      <div class="status-line"><b>chat:</b> <span id="chatStatus" class="status-offline">checking...</span></div>
+      <div class="status-line"><b>proxy:</b> <span id="proxyStatus">(loading)</span></div>
+      <div class="status-line"><b>chat:</b> <span id="chatStatus">(loading)</span></div>
     </div>
 
     <div class="home-block quick-links">
@@ -74,20 +74,7 @@
 
     <div class="home-block">
       <h2>news</h2>
-      <div id="newsList" class="news-stream">
-        <!-- copy this block to add a new entry
-        <div class="news-item">
-          <div class="news-date">MM/DD/YYYY</div>
-          <div><b>title</b></div>
-          <div>description</div>
-        </div>
-        -->
-        <div class="news-item">
-          <div class="news-date">03/19/2026</div>
-          <div><b>website redesign</b></div>
-          <div>The new layout is live with tabs and embedded pages.</div>
-        </div>
-      </div>
+      <div id="newsList" class="news-stream">(loading)</div>
     </div>
   </div>
 
@@ -182,6 +169,7 @@
       var themeToggle = document.getElementById('themeToggle');
       var searchInput = document.getElementById('search');
       var faqList = document.getElementById('faqList');
+      var newsList = document.getElementById('newsList');
       var chatInput1 = document.getElementById('u1');
       var chatInput2 = document.getElementById('u2');
       var messageInput1 = document.getElementById('m1');
@@ -257,104 +245,87 @@
         };
       }
 
-      function setStatus(elementId, isOnline, onlineText, offlineText) {
+      function applyStatus(elementId, item) {
         var el = document.getElementById(elementId);
-        if (!el) return;
+        if (!el || !item) {
+          return;
+        }
 
         el.classList.remove('status-online', 'status-offline');
-        el.classList.add(isOnline ? 'status-online' : 'status-offline');
-        el.textContent = isOnline ? onlineText : offlineText;
+
+        if (item.online) {
+          el.classList.add('status-online');
+          el.textContent = 'online';
+        } else {
+          el.classList.add('status-offline');
+          el.textContent = item.message ? 'offline, ' + item.message : 'offline';
+        }
       }
 
-      function checkChatStatus() {
-        return new Promise(function (resolve) {
-          var done = false;
-          var ws;
-
-          function finish(isOnline) {
-            if (done) return;
-            done = true;
-            try {
-              if (ws) ws.close();
-            } catch (error) {}
-            resolve(isOnline);
-          }
-
-          try {
-            ws = new WebSocket('wss://chat-server-production-14ad.up.railway.app');
-          } catch (error) {
-            finish(false);
-            return;
-          }
-
-          var timeout = setTimeout(function () {
-            finish(false);
-          }, 4000);
-
-          ws.onopen = function () {
-            clearTimeout(timeout);
-            finish(true);
-          };
-
-          ws.onerror = function () {
-            clearTimeout(timeout);
-            finish(false);
-          };
-
-          ws.onclose = function () {
-            if (!done) {
-              clearTimeout(timeout);
-              finish(false);
+      function loadStatus() {
+        fetch('/status.json')
+          .then(function (response) {
+            if (!response.ok) {
+              throw new Error('status.json not found');
             }
-          };
-        });
-      }
-
-      function checkProxyStatus() {
-        return new Promise(function (resolve) {
-          var finished = false;
-          var timeout = setTimeout(function () {
-            if (!finished) {
-              finished = true;
-              resolve(false);
-            }
-          }, 5000);
-
-          fetch('https://scramjet-app--m3tr0m0l4dev12.replit.app', {
-            method: 'GET',
-            mode: 'no-cors',
-            cache: 'no-store'
+            return response.json();
           })
-            .then(function () {
-              if (!finished) {
-                finished = true;
-                clearTimeout(timeout);
-                resolve(true);
-              }
-            })
-            .catch(function () {
-              if (!finished) {
-                finished = true;
-                clearTimeout(timeout);
-                resolve(false);
-              }
-            });
-        });
+          .then(function (data) {
+            applyStatus('proxyStatus', data.proxy);
+            applyStatus('chatStatus', data.chat);
+          })
+          .catch(function () {
+            var proxy = document.getElementById('proxyStatus');
+            var chat = document.getElementById('chatStatus');
+            if (proxy) proxy.textContent = '(nothing yet)';
+            if (chat) chat.textContent = '(nothing yet)';
+          });
       }
 
-      function refreshStatuses() {
-        checkChatStatus().then(function (isOnline) {
-          setStatus('chatStatus', isOnline, 'online', 'offline');
-        });
+      function loadNews() {
+        if (!newsList) {
+          return;
+        }
 
-        checkProxyStatus().then(function (isOnline) {
-          setStatus('proxyStatus', isOnline, 'online', 'offline, fix in progress');
-        });
-      }
+        newsList.textContent = '(loading)';
 
-      function setupStatusChecks() {
-        refreshStatuses();
-        setInterval(refreshStatuses, 30000);
+        fetch('/news.json')
+          .then(function (response) {
+            if (!response.ok) {
+              throw new Error('news.json not found');
+            }
+            return response.json();
+          })
+          .then(function (items) {
+            newsList.innerHTML = '';
+
+            if (!Array.isArray(items) || !items.length) {
+              newsList.textContent = '(nothing yet)';
+              return;
+            }
+
+            for (var i = 0; i < items.length; i += 1) {
+              var item = items[i] || {};
+              var wrap = document.createElement('div');
+              var date = document.createElement('div');
+              var title = document.createElement('div');
+              var body = document.createElement('div');
+
+              wrap.className = 'news-item';
+              date.className = 'news-date';
+              date.textContent = item.date || '';
+              title.innerHTML = '<b>' + (item.title || '') + '</b>';
+              body.textContent = item.text || '';
+
+              wrap.appendChild(date);
+              wrap.appendChild(title);
+              wrap.appendChild(body);
+              newsList.appendChild(wrap);
+            }
+          })
+          .catch(function () {
+            newsList.textContent = '(nothing yet)';
+          });
       }
 
       function makeChatState(id, server) {
@@ -622,7 +593,8 @@
       setupTheme();
       setupSearch();
       setupChat();
-      setupStatusChecks();
+      loadStatus();
+      loadNews();
       switchTab('about');
       switchChatTab('chat1');
       loadFaq();
@@ -632,6 +604,7 @@
       console.assert(document.querySelectorAll('#gameList a').length === 10, 'All original HTML5 games should be present');
       console.assert(typeof connectChat === 'function', 'Full chat interface should be present');
       console.assert(document.getElementById('faqList') !== null, 'FAQ should be present');
+      console.assert(document.getElementById('newsList') !== null, 'News should be present');
     })();
   </script>
 </body>
