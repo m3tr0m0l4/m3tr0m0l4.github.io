@@ -2,5 +2,5 @@
   { "q": "where scramjet fix scramjet raaaaah", "a": "im working on finding free hosting for scramjet (the web proxy). if anyone would like to help me or contribute to paid hosting, let me know. please be patient." },
   { "q": "why the redesign?", "a": "as i added more and more things to it, i realized the website needed a cleaner interface. this version offers a scalable base to work with where i can add even more stuff (like this faq page)." },
   { "q": "where can i watch movies/tv shows?", "a": "use the proxy and go on duckduckgo.com and search 'free media heck yeah.' that website will give you several options for movies and more. my favorite is cineby.gd ALSO internet archive (archive.org) works too! take advantage of it; it's fantastic." },
-  { "q": "multiplayer (LAN) support for minecraft?", "a": "CHECK NEWS big breakthrough here!" }
+  { "q": "multiplayer (LAN) support for minecraft?", "a": "really close to figuring this out. will test asap with the following relays: wss://relay.shhnowisnottheti.me/ wss://relay.deev.is/ wss://relay.lax1dude.net/ if none of them work i will have to selfhost, which is hard." }
 ]
