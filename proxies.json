@@ -1,0 +1,12 @@
+[
+  {
+    "label": "Scramjet proxy",
+    "href": "https://scramjet-app--m3tr0m0l4dev12.replit.app",
+    "note": "main proxy"
+  },
+  {
+    "label": "Proxy mirror",
+    "href": "https://graceful-peg-mola-org-e8eeadda.koyeb.app/",
+    "note": "unstable mirror, may be blocked"
+  }
+]
