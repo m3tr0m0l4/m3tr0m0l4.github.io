@@ -1,0 +1,9 @@
+{
+  "proxy": {
+    "online": false,
+    "message": "working on a fix"
+  },
+  "chat": {
+    "online": true
+  }
+}
