@@ -16,7 +16,16 @@
     body.dark { background: #0b0f14; color: #e6edf3; }
     body.dark a { color: #8ab4ff; }
     body.dark input,
-    body.dark button { background: #111823; color: #e6edf3; border: 1px solid #2a3441; }
+    body.dark button,
+    body.dark textarea,
+    body.dark select {
+      background: #111823;
+      color: #e6edf3;
+      border: 1px solid #2a3441;
+    }
+
+    body.dark .msgs { border-color: #2a3441 !important; }
+    body.dark .news-item { border-color: #2a3441; background: #111823; }
 
     .tab { display: none; }
     .tab.active { display: block; }
@@ -24,14 +33,18 @@
     .tabs { margin: 4px 0 6px; }
     .tabs button { padding: 2px 6px; }
 
-    h1 { margin-bottom: 0; }
+    h1 { margin: 0; }
     h2 { margin: 6px 0 4px; font-size: 24px; }
     h3 { margin: 8px 0 2px; font-size: 18px; }
+
+    p { margin: 0; }
+    ol, ul { margin: 4px 0; padding-left: 18px; }
 
     #lastUpdated {
       font-size: 12px;
       opacity: 0.7;
       margin-bottom: 6px;
+      text-align: left;
     }
 
     .news-item {
@@ -40,10 +53,11 @@
       margin-top: 6px;
     }
 
-    body.dark .news-item {
-      border-color: #2a3441;
-      background: #111823;
-    }
+    .faq-item { margin: 10px 0; }
+    .faq-item div { font-size: 13px; }
+
+    .proxy-link-item { margin: 6px 0; }
+    .proxy-link-note { font-size: 12px; opacity: 0.8; }
 
     .status-online { color: #2ecc71; }
     .status-offline { color: #e74c3c; }
@@ -58,6 +72,23 @@
     #gameList a {
       display: block;
       margin: 2px 0;
+      line-height: 1.1;
+    }
+
+    .chat-tab-buttons {
+      margin: 6px 0;
+    }
+
+    .chat-tab-buttons button {
+      margin-right: 4px;
+    }
+
+    .chat-subtab {
+      display: none;
+    }
+
+    .chat-subtab.active-chat {
+      display: block;
     }
   </style>
 </head>
@@ -70,126 +101,586 @@
 <label><input type="checkbox" id="themeToggle"> dark mode</label>
 
 <div class="tabs">
-<button data-tab="about">home</button>
-<button data-tab="proxy">proxy</button>
-<button data-tab="arcade">arcade</button>
-<button data-tab="flash">flash</button>
-<button data-tab="html5">html5</button>
-<button data-tab="chat">chat</button>
-<button data-tab="requests">requests & faq</button>
+  <button type="button" data-tab="about">home</button>
+  <button type="button" data-tab="proxy">proxy</button>
+  <button type="button" data-tab="arcade">arcade</button>
+  <button type="button" data-tab="flash">flash</button>
+  <button type="button" data-tab="html5">html5</button>
+  <button type="button" data-tab="chat">chat</button>
+  <button type="button" data-tab="requests">requests &amp; faq</button>
 </div>
 
 <!-- HOME -->
 <div id="about" class="tab active">
-<h2>status</h2>
-<div><b>proxy:</b> <span id="proxyStatus">(loading)</span></div>
-<div><b>chat:</b> <span id="chatStatus">(loading)</span></div>
+  <h2>status</h2>
+  <div><b>proxy:</b> <span id="proxyStatus">(loading)</span></div>
+  <div><b>chat:</b> <span id="chatStatus">(loading)</span></div>
 
-<h2>quick links</h2>
-<div id="quickLinks">(loading)</div>
+  <h2>quick links</h2>
+  <div id="quickLinks">(loading)</div>
 
-<h2>news</h2>
-<div id="newsList">(loading)</div>
+  <h2>news</h2>
+  <div id="newsList">(loading)</div>
 </div>
 
 <!-- PROXY -->
 <div id="proxy" class="tab">
+  <h2>proxy</h2>
+  <div id="proxyLinks">(loading)</div>
 
-<h2>proxy</h2>
-<div id="proxyLinks">(loading)</div>
+  <h2>proxy tips and limitations</h2>
 
-<h2>proxy tips and limitations</h2>
+  <p>this page is dedicated to logging some notable limitations and uses of the proxy.
+  note that any links given, unless otherwise mentioned, should not be directly clicked,
+  and instead should be accessed within the proxy<br><br></p>
 
-<p>this page is dedicated to logging some notable limitations and uses of the proxy.  
-note that any links given, unless otherwise mentioned, should not be directly clicked,  
-and instead should be accessed within the proxy<br><br></p>
+  <h3>useful sites that are unblocked!</h3>
+  <ul>
+    <li><b>internet archive (archive.org)</b> -- incredibly useful for finding books, webpage archives, movies; basically anything you can think of</li>
+    <li><b>social media</b> -- not "useful" per se, but still impressive. instagram and tiktok are completely unblocked as far as I can tell, even using just scramjet (more on that later)</li>
+    <li><b>duckduckgo (type duckduckgo.com into the searchbar after launching scramjet)</b> -- a fast, private, and secure search engine that works flawlessly on scramjet. google will hit you with annoying captchas ("click on all of the crosswalks") since it doesn't like you using a proxy. duckduckgo doesn't mind. use it</li>
+  </ul>
 
-<h3>useful sites that are unblocked!</h3>
-<ul>
-<li><b>internet archive</b> -- books, movies, webpages</li>
-<li><b>social media</b> -- instagram & tiktok work</li>
-<li><b>duckduckgo</b> -- no captchas</li>
-</ul>
+  <h3>dealing with roadblocks / miscellaneous tips & tricks</h3>
+  <ul>
+    <li><b>tip #1: layer it!</b> -- if you find that a page you are attempting to access is blocked by the website's host or other security measures (e.g. reddit, cloudflare-hosted sites), try opening a virtual browser within the proxy. these often have pretty disgusting input lag, so i wouldn't recommend this method for games, but it works ¯\_(ツ)_/¯<br>example(s): browser.lol (reddit will work on here)</li>
+    <li><b>tip #2: remember your info.</b> -- this applies to sites that need you to sign in before using them (most social media apps). it's not rocket science, just remember your login info</li>
+    <li><b>tip #3: don't be an idiot.</b> -- do not start boasting about this as loud as you can in class. this proxy is not intended for dumb stuff, it is mainly a resource for accessing sites that really should be unblocked already (archive.org, forums) and secure browsing, not so you can go on the hub on your school computer. it is a tool. do not abuse it please</li>
+  </ul>
 
-<h3>tips</h3>
-<ul>
-<li><b>layer it</b> -- use virtual browsers</li>
-<li><b>remember login</b></li>
-<li><b>don't be dumb</b></li>
-</ul>
-
+  <p><br><br>if the proxy doesn't work at all, sorry. i tried. if it does, yay! have fun</p>
 </div>
 
 <!-- ARCADE -->
 <div id="arcade" class="tab">
-<p>Download a ROM and load it below.</p>
-<iframe src="/arcade/" style="width:100%;height:600px;border:1px solid"></iframe>
+  <p>Download a ROM for the right system, then load it in the emulator below.</p>
+  <ol>
+    <li>Find a ROM for the correct system. <a href="https://github.com/Shugabuga/RomCollection/">This archive</a> is a good start. You can also use the <a href="https://m3tr0m0l4.github.io/r-Roms.github.io/">r/roms megathread</a>.</li>
+    <li>Make sure the file matches the system you want to run.</li>
+    <li>Open the emulator below.</li>
+    <li>Upload the file and play.</li>
+  </ol>
+  <iframe src="/arcade/" title="Arcade Emulator" style="width:100%;height:600px;border:1px solid"></iframe>
 </div>
 
 <!-- FLASH -->
 <div id="flash" class="tab">
-<p>Load a .swf file below.</p>
-<iframe src="/flashplayer/" style="width:100%;height:500px;border:1px solid"></iframe>
+  <p>Download a .swf file, then load it in the player below.</p>
+  <ol>
+    <li>Find a Flash game .swf from an archive like <a href="https://github.com/selenite-cc/flasharchive">selenite flasharchive</a> or <a href="https://github.com/BinBashBanana/gstore">gstore</a>.</li>
+    <li>Download the file.</li>
+    <li>Upload it in the player below, or use <a href="/flashplayer/">the standalone player</a>.</li>
+    <li>Go fullscreen and play.</li>
+  </ol>
+  <iframe src="/flashplayer/" title="Flash Player" style="width:100%;height:500px;border:1px solid"></iframe>
 </div>
 
 <!-- HTML5 -->
 <div id="html5" class="tab">
-<input id="search" placeholder="search html5 games">
-<div id="gameList">(loading)</div>
+  <p>Direct browser games that do not need ROM or SWF uploads.</p>
+  <label for="search">Search HTML5 games:</label>
+  <input id="search" placeholder="search html5 games">
+  <div id="gameList">(loading)</div>
 </div>
 
 <!-- CHAT -->
 <div id="chat" class="tab">
+  <div class="chat-tab-buttons">
+    <button type="button" onclick="switchChatTab('chat1')">Chat 1</button><button type="button" onclick="switchChatTab('chat2')">Chat 2</button>
+  </div>
 
-<h3>Chat 1</h3>
-<input id="u1" placeholder="name">
-<button onclick="connectChat(chat1State)">connect</button>
-<div id="msgs1" style="height:200px;overflow:auto;border:1px solid"></div>
-<input id="m1">
-<button onclick="sendMessage(chat1State)">send</button>
+  <div id="chat1" class="chat-subtab active-chat">
+    <h3>Chat 1</h3>
+    <div id="login1">
+      Name: <input id="u1" maxlength="20">
+      <button type="button" onclick="if (chat1State) connectChat(chat1State)">Connect</button>
+      <span id="err1" style="color:red"></span>
+    </div>
 
+    <div id="chatBox1" style="display:none">
+      <div style="margin:6px 0;font-family:monospace;font-size:12px;">Users online: <span id="users1">(loading)</span></div>
+      <div id="msgs1" class="msgs" style="height:200px;overflow-y:auto;border:1px solid #ccc;padding:4px;font-family:monospace;font-size:13px;margin-top:6px"></div>
+      <div id="typers1" style="font-size:11px;color:gray;height:16px"></div>
+      <input id="m1" style="width:400px" placeholder="message..." disabled>
+      <button type="button" id="sb1" onclick="if (chat1State) sendMessage(chat1State)" disabled>Send</button>
+      <button type="button" id="reconnectBtn1" onclick="if (chat1State) reloadChat(chat1State)" style="display:none">Reconnect</button>
+    </div>
+  </div>
+
+  <div id="chat2" class="chat-subtab">
+    <h3>Chat 2</h3>
+    <div id="login2">
+      Name: <input id="u2" maxlength="20">
+      <button type="button" onclick="if (chat2State) connectChat(chat2State)">Connect</button>
+      <span id="err2" style="color:red"></span>
+    </div>
+
+    <div id="chatBox2" style="display:none">
+      <div style="margin:6px 0;font-family:monospace;font-size:12px;">Users online: <span id="users2">(loading)</span></div>
+      <div id="msgs2" class="msgs" style="height:200px;overflow-y:auto;border:1px solid #ccc;padding:4px;font-family:monospace;font-size:13px;margin-top:6px"></div>
+      <div id="typers2" style="font-size:11px;color:gray;height:16px"></div>
+      <input id="m2" style="width:400px" placeholder="message..." disabled>
+      <button type="button" id="sb2" onclick="if (chat2State) sendMessage(chat2State)" disabled>Send</button>
+      <button type="button" id="reconnectBtn2" onclick="if (chat2State) reloadChat(chat2State)" style="display:none">Reconnect</button>
+    </div>
+  </div>
 </div>
 
 <!-- REQUESTS -->
 <div id="requests" class="tab">
-<a href="https://forms.gle/LjYg4BHPPaZuewUg6">request form</a>
-<h3>faq</h3>
-<div id="faqList"></div>
+  <a href="https://forms.gle/LjYg4BHPPaZuewUg6">request form (anonymous)</a>
+  <h3>faq</h3>
+  <div id="faqList"></div>
 </div>
 
 <script>
-(function(){
+(function () {
+  var themeToggle = document.getElementById('themeToggle');
+  var searchInput = document.getElementById('search');
+  var faqList = document.getElementById('faqList');
+  var newsList = document.getElementById('newsList');
+  var quickLinks = document.getElementById('quickLinks');
+  var proxyLinks = document.getElementById('proxyLinks');
+  var gameList = document.getElementById('gameList');
+  var chatInput1 = document.getElementById('u1');
+  var chatInput2 = document.getElementById('u2');
+  var messageInput1 = document.getElementById('m1');
+  var messageInput2 = document.getElementById('m2');
 
-function switchTab(id){
-  document.querySelectorAll('.tab').forEach(t=>{
-    t.className = t.id===id ? 'tab active' : 'tab';
-    t.style.display = t.id===id ? 'block' : 'none';
+  var chat1State = null;
+  var chat2State = null;
+  window.chat1State = null;
+  window.chat2State = null;
+
+  /* tabs */
+  function switchTab(id) {
+    document.querySelectorAll('.tab').forEach(function (tab) {
+      tab.className = tab.id === id ? 'tab active' : 'tab';
+      tab.style.display = tab.id === id ? 'block' : 'none';
+    });
+  }
+  window.switchTab = switchTab;
+
+  function switchChatTab(id) {
+    document.querySelectorAll('.chat-subtab').forEach(function (tab) {
+      var active = tab.id === id;
+      tab.className = active ? 'chat-subtab active-chat' : 'chat-subtab';
+      tab.style.display = active ? 'block' : 'none';
+    });
+  }
+  window.switchChatTab = switchChatTab;
+
+  document.querySelectorAll('.tabs button').forEach(function (button) {
+    button.onclick = function () {
+      switchTab(button.dataset.tab);
+    };
   });
-}
-document.querySelectorAll('.tabs button').forEach(b=>{
-  b.onclick = ()=>switchTab(b.dataset.tab);
-});
 
-const toggle=document.getElementById('themeToggle');
-function applyTheme(on){
-  document.body.classList.toggle('dark',on);
-  localStorage.setItem('d',on?'1':'0');
-  toggle.checked=on;
-}
-applyTheme(localStorage.getItem('d')==='1');
-toggle.onchange=()=>applyTheme(toggle.checked);
+  /* theme */
+  function applyTheme(on) {
+    document.body.classList.toggle('dark', on);
+    try {
+      localStorage.setItem('d', on ? '1' : '0');
+    } catch (error) {}
+    themeToggle.checked = on;
+  }
 
-/* last updated */
-fetch(window.location.href,{method:'HEAD'})
-.then(res=>{
-  const lm=res.headers.get('Last-Modified');
-  if(!lm)return;
-  const d=new Date(lm);
-  document.getElementById('lastUpdated').textContent =
-    'last updated: '+
-    (d.getMonth()+1)+'/'+d.getDate()+'/'+d.getFullYear();
-});
+  try {
+    applyTheme(localStorage.getItem('d') === '1');
+  } catch (error) {
+    applyTheme(false);
+  }
 
+  themeToggle.onchange = function () {
+    applyTheme(themeToggle.checked);
+  };
+
+  /* status */
+  function applyStatus(id, obj) {
+    var el = document.getElementById(id);
+    if (!el || !obj) return;
+
+    el.className = '';
+
+    if (obj.online === true) {
+      el.classList.add('status-online');
+      el.textContent = 'online';
+    } else if (obj.online === 'unstable') {
+      el.classList.add('status-unstable');
+      el.textContent = obj.message ? 'unstable, ' + obj.message : 'unstable';
+    } else {
+      el.classList.add('status-offline');
+      el.textContent = obj.message ? 'offline, ' + obj.message : 'offline';
+    }
+  }
+
+  fetch('/content/status.json')
+    .then(function (r) { return r.json(); })
+    .then(function (d) {
+      applyStatus('proxyStatus', d.proxy);
+      applyStatus('chatStatus', d.chat);
+    })
+    .catch(function () {});
+
+  /* news */
+  fetch('/content/news.json')
+    .then(function (r) { return r.json(); })
+    .then(function (items) {
+      newsList.innerHTML = '';
+      items.forEach(function (n) {
+        var d = document.createElement('div');
+        d.className = 'news-item';
+        d.innerHTML = n.date + '<br><b>' + n.title + '</b><br>' + n.text;
+        newsList.appendChild(d);
+      });
+    })
+    .catch(function () {
+      newsList.textContent = '(nothing yet)';
+    });
+
+  /* quick links */
+  fetch('/content/quicklinks.json')
+    .then(function (r) { return r.json(); })
+    .then(function (items) {
+      quickLinks.innerHTML = '';
+      items.forEach(function (i) {
+        var a = document.createElement('a');
+        a.href = i.href;
+        a.textContent = i.label;
+        quickLinks.appendChild(a);
+      });
+    })
+    .catch(function () {
+      quickLinks.textContent = '(nothing yet)';
+    });
+
+  /* proxy links */
+  fetch('/content/proxies.json')
+    .then(function (r) { return r.json(); })
+    .then(function (items) {
+      proxyLinks.innerHTML = '';
+      items.forEach(function (i) {
+        var wrap = document.createElement('div');
+        wrap.className = 'proxy-link-item';
+
+        var a = document.createElement('a');
+        a.href = i.href;
+        a.textContent = i.label;
+        wrap.appendChild(a);
+
+        if (i.note) {
+          var note = document.createElement('div');
+          note.className = 'proxy-link-note';
+          note.textContent = i.note;
+          wrap.appendChild(note);
+        }
+
+        proxyLinks.appendChild(wrap);
+      });
+    })
+    .catch(function () {
+      proxyLinks.textContent = '(nothing yet)';
+    });
+
+  /* games */
+  fetch('/content/games.json')
+    .then(function (r) { return r.json(); })
+    .then(function (items) {
+      gameList.innerHTML = '';
+      items.forEach(function (g) {
+        var a = document.createElement('a');
+        a.href = g.href;
+        a.textContent = g.label;
+        gameList.appendChild(a);
+      });
+    })
+    .catch(function () {
+      gameList.textContent = '(nothing yet)';
+    });
+
+  /* search */
+  searchInput.oninput = function () {
+    var q = searchInput.value.toLowerCase();
+    document.querySelectorAll('#gameList a').forEach(function (a) {
+      a.style.display = a.textContent.toLowerCase().includes(q) ? '' : 'none';
+    });
+  };
+
+  /* faq */
+  fetch('/content/faq.json')
+    .then(function (r) { return r.json(); })
+    .then(function (items) {
+      faqList.innerHTML = '';
+      items.forEach(function (i) {
+        var d = document.createElement('div');
+        d.className = 'faq-item';
+        d.innerHTML = '<b>Q:</b> ' + i.q + '<br><b>A:</b> ' + i.a;
+        faqList.appendChild(d);
+      });
+    })
+    .catch(function () {
+      faqList.textContent = '(nothing yet)';
+    });
+
+  /* last updated */
+  fetch(window.location.href, { method: 'HEAD' })
+    .then(function (res) {
+      var lm = res.headers.get('Last-Modified');
+      if (!lm) return;
+      var d = new Date(lm);
+      document.getElementById('lastUpdated').textContent =
+        'last updated: ' +
+        String(d.getMonth() + 1).padStart(2, '0') + '/' +
+        String(d.getDate()).padStart(2, '0') + '/' +
+        d.getFullYear();
+    })
+    .catch(function () {});
+
+  /* chat config */
+  function makeChatState(id, server) {
+    return {
+      id: id,
+      server: server,
+      ws: null,
+      me: null,
+      ping: null,
+      isConnecting: false,
+      typingUsers: new Set(),
+      clearTimers: {}
+    };
+  }
+
+  function loadChatConfig() {
+    return fetch('/content/config.json')
+      .then(function (res) {
+        if (!res.ok) throw new Error('config.json not found');
+        return res.json();
+      })
+      .then(function (config) {
+        var chat = config.chat || {};
+        chat1State = makeChatState(1, chat.server1);
+        chat2State = makeChatState(2, chat.server2);
+        window.chat1State = chat1State;
+        window.chat2State = chat2State;
+      })
+      .catch(function () {
+        console.error('Failed to load /content/config.json');
+      });
+  }
+
+  function addNode(state, node) {
+    var msgs = document.getElementById('msgs' + state.id);
+    msgs.appendChild(node);
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+
+  function addSystemLine(state, text) {
+    var line = document.createElement('div');
+    line.textContent = text;
+    addNode(state, line);
+  }
+
+  function renderUsers(state, users) {
+    var el = document.getElementById('users' + state.id);
+    if (!users.length) {
+      el.textContent = '(none)';
+      return;
+    }
+    el.textContent = users.map(function (user) {
+      return user.username;
+    }).join(', ');
+  }
+
+  function renderMsg(state, message) {
+    var timestamp = new Date(message.timestamp).toLocaleString('en-US', {
+      hour12: false,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+    var line = document.createElement('div');
+    line.textContent = '[' + timestamp + '] ' + message.username + ': ' + message.text;
+    addNode(state, line);
+  }
+
+  function updateTyping(state) {
+    var names = Array.from(state.typingUsers);
+    document.getElementById('typers' + state.id).textContent =
+      names.length ? names.join(', ') + ' typing...' : '';
+  }
+
+  function showTyping(state, username) {
+    if (!username) return;
+    state.typingUsers.add(username);
+    updateTyping(state);
+    clearTimeout(state.clearTimers[username]);
+    state.clearTimers[username] = setTimeout(function () {
+      state.typingUsers.delete(username);
+      updateTyping(state);
+    }, 2500);
+  }
+
+  function handleMessage(state, data) {
+    var err = document.getElementById('err' + state.id);
+
+    if (data.type === 'error') {
+      err.textContent = data.reason || 'error';
+      state.isConnecting = false;
+      return;
+    }
+
+    if (data.type === 'welcome') {
+      state.me = data.username;
+      state.isConnecting = false;
+      err.textContent = '';
+      document.getElementById('login' + state.id).style.display = 'none';
+      document.getElementById('chatBox' + state.id).style.display = '';
+      document.getElementById('m' + state.id).disabled = false;
+      document.getElementById('sb' + state.id).disabled = false;
+      document.getElementById('m' + state.id).focus();
+      (data.history || []).forEach(function (message) {
+        renderMsg(state, message);
+      });
+      renderUsers(state, data.users || []);
+      addSystemLine(state, '--- connected as ' + state.me + ' ---');
+      return;
+    }
+
+    if (data.type === 'message') {
+      renderMsg(state, data);
+    } else if (data.type === 'system') {
+      addSystemLine(state, '--- ' + data.text + ' ---');
+    } else if (data.type === 'typing') {
+      showTyping(state, data.username);
+    } else if (data.type === 'userlist') {
+      renderUsers(state, data.users || []);
+    }
+  }
+
+  function connectChat(state) {
+    if (!state || !state.server) return;
+
+    var username = document.getElementById('u' + state.id).value.trim();
+    var err = document.getElementById('err' + state.id);
+
+    if (!username) {
+      err.textContent = 'need a name';
+      return;
+    }
+    if (state.isConnecting) {
+      return;
+    }
+
+    state.isConnecting = true;
+    err.textContent = 'connecting...';
+    state.ws = new WebSocket(state.server);
+
+    state.ws.onopen = function () {
+      state.ws.send(JSON.stringify({ type: 'join', username: username }));
+      state.ping = setInterval(function () {
+        if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+          state.ws.send(JSON.stringify({ type: 'ping' }));
+        }
+      }, 25000);
+    };
+
+    state.ws.onmessage = function (event) {
+      var data;
+      try {
+        data = JSON.parse(event.data);
+      } catch (error) {
+        return;
+      }
+      handleMessage(state, data);
+    };
+
+    state.ws.onerror = function () {
+      err.textContent = 'connection failed';
+      state.isConnecting = false;
+    };
+
+    state.ws.onclose = function () {
+      state.isConnecting = false;
+      clearInterval(state.ping);
+      state.ping = null;
+      state.ws = null;
+      document.getElementById('m' + state.id).disabled = true;
+      document.getElementById('sb' + state.id).disabled = true;
+      document.getElementById('reconnectBtn' + state.id).style.display = '';
+      addSystemLine(state, '--- disconnected ---');
+    };
+  }
+  window.connectChat = connectChat;
+
+  function reloadChat(state) {
+    if (!state) return;
+    state.me = null;
+    document.getElementById('chatBox' + state.id).style.display = 'none';
+    document.getElementById('login' + state.id).style.display = '';
+    document.getElementById('reconnectBtn' + state.id).style.display = 'none';
+    document.getElementById('msgs' + state.id).innerHTML = '';
+    document.getElementById('err' + state.id).textContent = '';
+  }
+  window.reloadChat = reloadChat;
+
+  function sendMessage(state) {
+    if (!state) return;
+    var input = document.getElementById('m' + state.id);
+    var text = input.value.trim();
+    if (!text || !state.ws || state.ws.readyState !== WebSocket.OPEN) {
+      return;
+    }
+    state.ws.send(JSON.stringify({ type: 'message', text: text }));
+    input.value = '';
+  }
+  window.sendMessage = sendMessage;
+
+  if (chatInput1) {
+    chatInput1.onkeydown = function (event) {
+      if (event.key === 'Enter' && chat1State) {
+        connectChat(chat1State);
+      }
+    };
+  }
+
+  if (chatInput2) {
+    chatInput2.onkeydown = function (event) {
+      if (event.key === 'Enter' && chat2State) {
+        connectChat(chat2State);
+      }
+    };
+  }
+
+  if (messageInput1) {
+    messageInput1.onkeydown = function (event) {
+      if (event.key === 'Enter') {
+        if (chat1State) sendMessage(chat1State);
+        return;
+      }
+      if (chat1State && chat1State.ws && chat1State.ws.readyState === WebSocket.OPEN) {
+        chat1State.ws.send(JSON.stringify({ type: 'typing' }));
+      }
+    };
+  }
+
+  if (messageInput2) {
+    messageInput2.onkeydown = function (event) {
+      if (event.key === 'Enter') {
+        if (chat2State) sendMessage(chat2State);
+        return;
+      }
+      if (chat2State && chat2State.ws && chat2State.ws.readyState === WebSocket.OPEN) {
+        chat2State.ws.send(JSON.stringify({ type: 'typing' }));
+      }
+    };
+  }
+
+  loadChatConfig();
+  switchTab('about');
+  switchChatTab('chat1');
 })();
 </script>
 
