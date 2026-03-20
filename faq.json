@@ -1,4 +1,6 @@
 [
   { "q": "where scramjet fix scramjet raaaaah", "a": "im working on finding free hosting for scramjet (the web proxy). if anyone would like to help me or contribute to paid hosting, let me know. please be patient." },
   { "q": "why the redesign?", "a": "as i added more and more things to it, i realized the website needed a cleaner interface. this version offers a scalable base to work with where i can add even more stuff (like this faq page)." }
+  { "q": "where can i watch movies/tv shows?", "a": "use the proxy and go on duckduckgo.com and search \"free media heck yeah.\" it'll link you several options. my favorite is cineby.gd ALSO internet archive (archive.org) works too! take advantage of it; it's fantastic." }
+  { "q": "multiplayer (lan) support for minecraft?", "a": "this is an interesting one. i haven't fully looked into how the LAN works on the version linked on the website. if anyone makes a breakthrough, please let me know through either the feature request form or speaking to me in real life! thanks" }
 ]
