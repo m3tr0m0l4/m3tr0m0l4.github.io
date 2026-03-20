@@ -19,6 +19,7 @@
     .tabs { margin: 4px 0 6px; }
     .tabs button { padding: 2px 6px; }
 
+    h1 { margin-bottom: 0; }
     h2 { margin: 6px 0 4px; font-size: 24px; }
     h3 { margin: 8px 0 2px; font-size: 18px; }
 
@@ -33,13 +34,19 @@
     body.dark .status-offline { color: #ff6b6b; }
     body.dark .status-unstable { color: #ffd93d; }
 
-    footer { margin-top: 20px; font-size: 12px; opacity: 0.7; }
+    #lastUpdated {
+      text-align: right;
+      font-size: 12px;
+      opacity: 0.7;
+      margin-bottom: 6px;
+    }
   </style>
 </head>
 
 <body>
 
 <h1>unblocked library</h1>
+<div id="lastUpdated">(loading)</div>
 
 <label><input type="checkbox" id="themeToggle"> dark mode</label>
 
@@ -69,22 +76,7 @@
 <div id="proxyLinks">(loading)</div>
 
 <h2>proxy tips and limitations</h2>
-
-<p>this page is dedicated to logging some notable limitations and uses of the proxy. note that any links given, unless otherwise mentioned, should be accessed within the proxy<br><br></p>
-
-<h3>useful sites that are unblocked!</h3>
-<ul>
-<li><b>internet archive (archive.org)</b> -- incredibly useful for books, webpage archives, movies; basically anything</li>
-<li><b>social media</b> -- instagram and tiktok seem to work fine</li>
-<li><b>duckduckgo</b> -- works better than google (no captchas)</li>
-</ul>
-
-<h3>tips</h3>
-<ul>
-<li><b>layer it</b> -- use virtual browsers if blocked</li>
-<li><b>remember your login</b></li>
-<li><b>don’t be dumb</b></li>
-</ul>
+<p>this page is dedicated to logging some notable limitations and uses of the proxy. note that any links should be accessed within the proxy.</p>
 
 </div>
 
@@ -100,8 +92,6 @@
 <h3>faq</h3>
 <div id="faqList"></div>
 </div>
-
-<footer id="lastUpdated">(loading)</footer>
 
 <script>
 (function(){
@@ -233,16 +223,16 @@ fetch('/content/faq.json')
   });
 });
 
-/* last updated (automatic) */
+/* last updated */
 fetch(window.location.href,{method:'HEAD'})
 .then(res=>{
   const lm=res.headers.get('Last-Modified');
   if(!lm)return;
   const d=new Date(lm);
-  document.getElementById('lastUpdated').textContent=
-    'last updated: '+
-    String(d.getMonth()+1).padStart(2,'0')+'/'+
-    String(d.getDate()).padStart(2,'0')+'/'+
+  document.getElementById('lastUpdated').textContent =
+    'last updated: ' +
+    String(d.getMonth()+1).padStart(2,'0') + '/' +
+    String(d.getDate()).padStart(2,'0') + '/' +
     d.getFullYear();
 });
 
