@@ -5,7 +5,7 @@
     "note": "main proxy, currently DOWN"
   },
   {
-    "label": "Proxy mirror",
+    "label": "Mirror 1",
     "href": "https://graceful-peg-mola-org-e8eeadda.koyeb.app/",
     "note": "unstable mirror, may be blocked"
   }
