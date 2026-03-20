@@ -1,336 +1,526 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Unblocked Library</title>
-  <link rel="icon" type="image/svg" href="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Gmail_icon_%282020%29.svg/960px-Gmail_icon_%282020%29.svg.png?20221017173631">
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
+    body { margin: 10px; line-height: 1.25; max-width: 760px; }
     body.dark { background: #0b0f14; color: #e6edf3; }
     body.dark a { color: #8ab4ff; }
-    body.dark input, body.dark button { background: #111823; color: #e6edf3; border: 1px solid #2a3441; }
-    body.dark hr { border-color: #2a3441; }
+    body.dark input,
+    body.dark button { background: #111823; color: #e6edf3; border: 1px solid #2a3441; }
     body.dark .msgs { border-color: #2a3441 !important; }
 
-    .chat-tab-buttons {
-      margin: 10px 0;
-    }
+    .tab { display: none; }
+    .tab.active { display: block; }
 
-    .chat-tab-buttons button {
-      margin-right: 8px;
-    }
+    .tabs { margin: 4px 0 6px; }
+    .tabs button { margin-right: 0; padding: 2px 6px; }
 
-    .chat-tab {
-      display: none;
-    }
+    .home-block { margin-top: 10px; }
+    .status-line { margin: 2px 0; }
+    .quick-links { margin-top: 6px; }
+    .quick-links a { display: block; margin: 1px 0; }
+    .section-label { display: block; margin-top: 8px; margin-bottom: 3px; } h2 { margin: 6px 0 3px; font-size: 20px; }
 
-    .chat-tab.active {
-      display: block;
-    }
+    p { margin: 0; }
+    h3 { margin: 0; font-size: 18px; }
+
+    ol { margin: 4px 0; padding-left: 18px; }
+    input,
+    button { margin: 0; }
+
+    #about a,
+    #gameList a { line-height: 1.1; }
+
+    .news-stream { margin-top: 6px; }
+    .news-item { border: 1px solid #ccc; padding: 6px 8px; margin-top: 6px; }
+    .news-date { font-size: 12px; opacity: 0.8; }
+    body.dark .news-item { border-color: #2a3441; background: #111823; }
   </style>
 </head>
-
 <body>
-<h1>unblocked library</h1>
-<p>Linewize is annoying. Here is a website for unblocked resources.</p>
+  <h1>unblocked library</h1>
 
-<b><br>!!! achtung !!! the proxy is currently down..please wait while I work on a fix<br></b>
-<button onclick="window.open('https://scramjet-app--m3tr0m0l4dev12.replit.app', '_blank')" style="width: 250px; white-space: nowrap;">Scramjet Proxy</button>
-<button onclick="window.open('/proxy-tips/', '_blank')" style="width: 250px; white-space: nowrap;">Tips and tricks for using Scramjet</button>
+  <label><input type="checkbox" id="themeToggle"> dark mode</label>
 
-<b><br>Arcade emulator<br></b>
-<button onclick="window.open('/arcade-loading-page/', '_blank')" style="width: 250px; white-space: nowrap;">Tutorial</button>
-
-<b><br>Play any flash game unblocked<br></b>
-<button onclick="window.open('/flash-loading-page/', '_blank')" style="width: 250px; white-space: nowrap;">Tutorial</button>
-
-<b><br>Other games<br></b>
-<button onclick="window.open('/slope/', '_blank')" style="width: 250px; white-space: nowrap;">Slope unblocked</button>
-<button onclick="window.open('/half-life/', '_blank')" style="width: 250px; white-space: nowrap;">Half Life (FPS)</button>
-<button onclick="window.open('/hexgl/', '_blank')" style="width: 250px; white-space: nowrap;">HexGL (Futuristic Racing!)</button>
-<button onclick="window.open('/eaglercraft/', '_blank')" style="width: 250px; white-space: nowrap;">Minecraft 1.5.2</button>
-<button onclick="window.open('/2048/', '_blank')" style="width: 250px; white-space: nowrap;">2048</button>
-<button onclick="window.open('/adarkroom/', '_blank')" style="width: 250px; white-space: nowrap;">A Dark Room</button>
-<button onclick="window.open('/run3/', '_blank')" style="width: 250px; white-space: nowrap;">Run 3</button>
-<button onclick="window.open('/shapez.io-master/', '_blank')" style="width: 250px; white-space: nowrap;">Shapez.io</button>
-<button onclick="window.open('/retrobowl/', '_blank')" style="width: 250px; white-space: nowrap;">Retro Bowl</button>
-<button onclick="window.open('/vex3/', '_blank')" style="width: 250px; white-space: nowrap;">Vex 3</button>
-
-<b><br>REQUEST FORM (if you have suggestions for the website, or unblocked things you have found that should be on here (thank you), put them here)<br></b>
-<a href="https://forms.gle/LjYg4BHPPaZuewUg6">Link (Google Forms)</a>
-
-<hr>
-
-<b>Chat</b><br>
-
-<div class="chat-tab-buttons">
-  <button onclick="switchTab('chat1')">Chat 1</button>
-  <button onclick="switchTab('chat2')">Chat 2</button>
-</div>
-
-<div id="chat1" class="chat-tab active">
-  <h3>Chat 1</h3>
-  <div id="login1">
-    Name: <input id="u1" maxlength="20">
-    <button onclick="connectChat(chat1State)">Connect</button>
-    <span id="err1" style="color:red"></span>
+  <div class="tabs">
+    <button type="button" data-tab="about">home</button><button type="button" data-tab="arcade">arcade</button><button type="button" data-tab="flash">flash</button><button type="button" data-tab="html5">html5</button><button type="button" data-tab="chat">chat</button><button type="button" data-tab="requests">requests &amp; faq</button>
   </div>
 
-  <div id="chatBox1" style="display:none">
-    <div style="margin:6px 0; font-family:monospace; font-size:12px;">
-      Users online: <span id="users1">(loading)</span>
+  <div id="about" class="tab active">
+    <div class="home-block">
+      <h2>status</h2>
+      <div class="status-line"><b>proxy:</b> offline, fix in progress</div>
+      <div class="status-line"><b>chat:</b> online</div>
     </div>
-    <div id="msgs1" class="msgs" style="height:200px; overflow-y:auto; border:1px solid #ccc; padding:4px; font-family:monospace; font-size:13px; margin-top:6px"></div>
-    <div id="typers1" style="font-size:11px; color:gray; height:16px"></div>
-    <input id="m1" style="width:400px" placeholder="message…" disabled>
-    <button onclick="sendMessage(chat1State)" id="sb1" disabled>Send</button>
-    <button id="reconnectBtn1" onclick="reloadChat(chat1State)" style="display:none; margin-left:8px">Reconnect</button>
-  </div>
-</div>
 
-<div id="chat2" class="chat-tab">
-  <h3>Chat 2</h3>
-  <div id="login2">
-    Name: <input id="u2" maxlength="20">
-    <button onclick="connectChat(chat2State)">Connect</button>
-    <span id="err2" style="color:red"></span>
-  </div>
-
-  <div id="chatBox2" style="display:none">
-    <div style="margin:6px 0; font-family:monospace; font-size:12px;">
-      Users online: <span id="users2">(loading)</span>
+    <div class="home-block quick-links">
+      <h2>quick links</h2>
+      <a href="/slope/">Slope</a>
+      <a href="/eaglercraft/">Minecraft 1.5.2</a>
+      <a href="https://scramjet-app--m3tr0m0l4dev12.replit.app">Proxy</a>
     </div>
-    <div id="msgs2" class="msgs" style="height:200px; overflow-y:auto; border:1px solid #ccc; padding:4px; font-family:monospace; font-size:13px; margin-top:6px"></div>
-    <div id="typers2" style="font-size:11px; color:gray; height:16px"></div>
-    <input id="m2" style="width:400px" placeholder="message…" disabled>
-    <button onclick="sendMessage(chat2State)" id="sb2" disabled>Send</button>
-    <button id="reconnectBtn2" onclick="reloadChat(chat2State)" style="display:none; margin-left:8px">Reconnect</button>
+
+    <div class="home-block">
+      <h2>news</h2>
+      <div id="newsList" class="news-stream">
+        <!-- copy this block to add a new entry
+        <div class="news-item">
+          <div class="news-date">MM/DD/YYYY</div>
+          <div><b>title</b></div>
+          <div>description</div>
+        </div>
+        -->
+        <div class="news-item">
+          <div class="news-date">03/19/2026</div>
+          <div><b>website redesign</b></div>
+          <div>The new layout is live with tabs and embedded pages.</div>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
 
-<hr>
-<div style="margin-top:10px;">
-  <label><input type="checkbox" id="darkToggle"> dark mode</label>
-</div>
+  <div id="arcade" class="tab">
+    <p>Download a ROM for the right system, then load it in the emulator below.</p>
+    <ol>
+      <li>Find a ROM for the correct system. <a href="https://github.com/Shugabuga/RomCollection/">This archive</a> is a good start. You can also use the <a href="https://m3tr0m0l4.github.io/r-Roms.github.io/">r/roms megathread</a>.</li>
+      <li>Make sure the file matches the system you want to run.</li>
+      <li>Open the emulator below.</li>
+      <li>Upload the file and play.</li>
+    </ol>
+    <iframe src="/arcade/" title="Arcade Emulator" style="width:100%;height:600px;border:1px solid"></iframe>
+  </div>
 
-<script>
-  const SERVER_1 = 'wss://chat-server-production-14ad.up.railway.app';
-  const SERVER_2 = 'wss://web-production-e91a8.up.railway.app';
+  <div id="flash" class="tab">
+    <p>Download a .swf file, then load it in the player below.</p>
+    <ol>
+      <li>Find a Flash game .swf from an archive like <a href="https://github.com/selenite-cc/flasharchive">selenite flasharchive</a> or <a href="https://github.com/BinBashBanana/gstore">gstore</a>.</li>
+      <li>Download the file.</li>
+      <li>Upload it in the player below, or use <a href="/flashplayer/">the standalone player</a>.</li>
+      <li>Go fullscreen and play.</li>
+    </ol>
+    <iframe src="/flashplayer/" title="Flash Player" style="width:100%;height:500px;border:1px solid"></iframe>
+  </div>
 
-  const chat1State = makeChatState(1, SERVER_1);
-  const chat2State = makeChatState(2, SERVER_2);
+  <div id="html5" class="tab">
+    <p>Direct browser games that do not need ROM or SWF uploads.</p>
+    <label for="search">Search HTML5 games:</label>
+    <input id="search" placeholder="search html5 games">
+    <div id="gameList">
+      <a href="/slope/">Slope</a><br>
+      <a href="/half-life/">Half Life (FPS)</a><br>
+      <a href="/hexgl/">HexGL (Futuristic Racing!)</a><br>
+      <a href="/eaglercraft/">Minecraft 1.5.2</a><br>
+      <a href="/2048/">2048</a><br>
+      <a href="/adarkroom/">A Dark Room</a><br>
+      <a href="/run3/">Run 3</a><br>
+      <a href="/shapez.io-master/">Shapez.io</a><br>
+      <a href="/retrobowl/">Retro Bowl</a><br>
+      <a href="/vex3/">Vex 3</a>
+    </div>
+  </div>
 
-  function makeChatState(id, server) {
-    return {
-      id,
-      server,
-      ws: null,
-      me: null,
-      ping: null,
-      isConnecting: false,
-      typingUsers: new Set(),
-      clearTimers: {}
-    };
-  }
+  <div id="chat" class="tab">
+    <div class="chat-tab-buttons">
+      <button type="button" onclick="switchChatTab('chat1')">Chat 1</button><button type="button" onclick="switchChatTab('chat2')">Chat 2</button>
+    </div>
 
-  function switchTab(tabId) {
-    document.querySelectorAll('.chat-tab').forEach(tab => tab.classList.remove('active'));
-    document.getElementById(tabId).classList.add('active');
-  }
+    <div id="chat1" class="chat-subtab">
+      <h3>Chat 1</h3>
+      <div id="login1">
+        Name: <input id="u1" maxlength="20">
+        <button type="button" onclick="connectChat(chat1State)">Connect</button>
+        <span id="err1" style="color:red"></span>
+      </div>
+      <div id="chatBox1" style="display:none">
+        <div style="margin:6px 0;font-family:monospace;font-size:12px;">Users online: <span id="users1">(loading)</span></div>
+        <div id="msgs1" class="msgs" style="height:200px;overflow-y:auto;border:1px solid #ccc;padding:4px;font-family:monospace;font-size:13px;margin-top:6px"></div>
+        <div id="typers1" style="font-size:11px;color:gray;height:16px"></div>
+        <input id="m1" style="width:400px" placeholder="message..." disabled>
+        <button type="button" id="sb1" onclick="sendMessage(chat1State)" disabled>Send</button>
+        <button type="button" id="reconnectBtn1" onclick="reloadChat(chat1State)" style="display:none">Reconnect</button>
+      </div>
+    </div>
 
-  const darkToggle = document.getElementById('darkToggle');
-  function applyDark(on) {
-    document.body.classList.toggle('dark', !!on);
-    localStorage.setItem('darkMode', on ? '1' : '0');
-    darkToggle.checked = !!on;
-  }
-  applyDark(localStorage.getItem('darkMode') === '1');
-  darkToggle.addEventListener('change', () => applyDark(darkToggle.checked));
+    <div id="chat2" class="chat-subtab" style="display:none">
+      <h3>Chat 2</h3>
+      <div id="login2">
+        Name: <input id="u2" maxlength="20">
+        <button type="button" onclick="connectChat(chat2State)">Connect</button>
+        <span id="err2" style="color:red"></span>
+      </div>
+      <div id="chatBox2" style="display:none">
+        <div style="margin:6px 0;font-family:monospace;font-size:12px;">Users online: <span id="users2">(loading)</span></div>
+        <div id="msgs2" class="msgs" style="height:200px;overflow-y:auto;border:1px solid #ccc;padding:4px;font-family:monospace;font-size:13px;margin-top:6px"></div>
+        <div id="typers2" style="font-size:11px;color:gray;height:16px"></div>
+        <input id="m2" style="width:400px" placeholder="message..." disabled>
+        <button type="button" id="sb2" onclick="sendMessage(chat2State)" disabled>Send</button>
+        <button type="button" id="reconnectBtn2" onclick="reloadChat(chat2State)" style="display:none">Reconnect</button>
+      </div>
+    </div>
+  </div>
 
-  function connectChat(state) {
-    const u = document.getElementById('u' + state.id).value.trim();
-    const err = document.getElementById('err' + state.id);
+  <div id="requests" class="tab">
+    <p>Use the form to send requests.</p>
+    <p><a href="https://forms.gle/LjYg4BHPPaZuewUg6">request form (anonymous)</a></p>
+    <h3>faq</h3>
+    <div id="faqList"></div>
+  </div>
 
-    if (!u) {
-      err.textContent = 'need a name';
-      return;
-    }
-    if (state.isConnecting) return;
+  <script>
+    (function () {
+      var themeToggle = document.getElementById('themeToggle');
+      var searchInput = document.getElementById('search');
+      var faqList = document.getElementById('faqList');
+      var chatInput1 = document.getElementById('u1');
+      var chatInput2 = document.getElementById('u2');
+      var messageInput1 = document.getElementById('m1');
+      var messageInput2 = document.getElementById('m2');
 
-    state.isConnecting = true;
-    err.textContent = 'connecting...';
-
-    state.ws = new WebSocket(state.server);
-
-    state.ws.onopen = () => {
-      state.ws.send(JSON.stringify({ type: 'join', username: u }));
-      state.ping = setInterval(() => {
-        if (state.ws && state.ws.readyState === WebSocket.OPEN) {
-          state.ws.send(JSON.stringify({ type: 'ping' }));
+      function showOnly(selector, activeId, visibleDisplay) {
+        var nodes = document.querySelectorAll(selector);
+        for (var i = 0; i < nodes.length; i += 1) {
+          nodes[i].style.display = nodes[i].id === activeId ? visibleDisplay : 'none';
         }
-      }, 25000);
-    };
+      }
 
-    state.ws.onmessage = e => {
-      let d;
-      try { d = JSON.parse(e.data); } catch { return; }
-      handleMessage(state, d);
-    };
+      function switchTab(id) {
+        var tabs = document.querySelectorAll('.tab');
+        for (var i = 0; i < tabs.length; i += 1) {
+          tabs[i].className = tabs[i].id === id ? 'tab active' : 'tab';
+          tabs[i].style.display = tabs[i].id === id ? 'block' : 'none';
+        }
+        return !!document.getElementById(id);
+      }
+      window.switchTab = switchTab;
 
-    state.ws.onerror = () => {
-      err.textContent = 'connection failed';
-      state.isConnecting = false;
-    };
+      function switchChatTab(id) {
+        showOnly('.chat-subtab', id, 'block');
+      }
+      window.switchChatTab = switchChatTab;
 
-    state.ws.onclose = () => {
-      state.isConnecting = false;
-      clearInterval(state.ping);
-      state.ping = null;
-      state.ws = null;
+      function applyTheme(isDark) {
+        document.body.classList.toggle('dark', !!isDark);
+        if (themeToggle) {
+          themeToggle.checked = !!isDark;
+        }
+        try {
+          localStorage.setItem('d', isDark ? '1' : '0');
+        } catch (error) {}
+      }
 
-      document.getElementById('m' + state.id).disabled = true;
-      document.getElementById('sb' + state.id).disabled = true;
-      document.getElementById('reconnectBtn' + state.id).style.display = '';
-      addSystemLine(state, '--- disconnected ---');
-    };
-  }
+      function setupTabs() {
+        var tabButtons = document.querySelectorAll('.tabs button[data-tab]');
+        for (var i = 0; i < tabButtons.length; i += 1) {
+          tabButtons[i].onclick = function (event) {
+            if (event) {
+              event.preventDefault();
+            }
+            switchTab(this.getAttribute('data-tab'));
+          };
+        }
+      }
 
-  function reloadChat(state) {
-    state.me = null;
-    document.getElementById('chatBox' + state.id).style.display = 'none';
-    document.getElementById('login' + state.id).style.display = '';
-    document.getElementById('reconnectBtn' + state.id).style.display = 'none';
-    document.getElementById('msgs' + state.id).innerHTML = '';
-    document.getElementById('err' + state.id).textContent = '';
-  }
+      function setupTheme() {
+        var isDark = false;
+        try {
+          isDark = localStorage.getItem('d') === '1';
+        } catch (error) {}
+        applyTheme(isDark);
+        if (themeToggle) {
+          themeToggle.onchange = function () {
+            applyTheme(themeToggle.checked);
+          };
+        }
+      }
 
-  function handleMessage(state, d) {
-    const err = document.getElementById('err' + state.id);
+      function setupSearch() {
+        if (!searchInput) {
+          return;
+        }
+        searchInput.oninput = function () {
+          var query = searchInput.value.toLowerCase();
+          var links = document.querySelectorAll('#gameList a');
+          for (var i = 0; i < links.length; i += 1) {
+            links[i].style.display = links[i].textContent.toLowerCase().indexOf(query) > -1 ? '' : 'none';
+          }
+        };
+      }
 
-    if (d.type === 'error') {
-      err.textContent = d.reason || 'error';
-      state.isConnecting = false;
-      return;
-    }
+      function makeChatState(id, server) {
+        return {
+          id: id,
+          server: server,
+          ws: null,
+          me: null,
+          ping: null,
+          isConnecting: false,
+          typingUsers: new Set(),
+          clearTimers: {}
+        };
+      }
 
-    if (d.type === 'welcome') {
-      state.me = d.username;
-      state.isConnecting = false;
-      err.textContent = '';
+      var SERVER_1 = 'wss://chat-server-production-14ad.up.railway.app';
+      var SERVER_2 = 'wss://web-production-e91a8.up.railway.app';
+      var chat1State = makeChatState(1, SERVER_1);
+      var chat2State = makeChatState(2, SERVER_2);
+      window.chat1State = chat1State;
+      window.chat2State = chat2State;
 
-      document.getElementById('login' + state.id).style.display = 'none';
-      document.getElementById('chatBox' + state.id).style.display = '';
-      document.getElementById('m' + state.id).disabled = false;
-      document.getElementById('sb' + state.id).disabled = false;
-      document.getElementById('m' + state.id).focus();
+      function addNode(state, node) {
+        var msgs = document.getElementById('msgs' + state.id);
+        msgs.appendChild(node);
+        msgs.scrollTop = msgs.scrollHeight;
+      }
 
-      (d.history || []).forEach(msg => renderMsg(state, msg));
-      renderUsers(state, d.users || []);
-      addSystemLine(state, '--- connected as ' + state.me + ' ---');
+      function addSystemLine(state, text) {
+        var line = document.createElement('div');
+        line.textContent = text;
+        addNode(state, line);
+      }
 
-    } else if (d.type === 'message') {
-      renderMsg(state, d);
-    } else if (d.type === 'system') {
-      addSystemLine(state, '--- ' + d.text + ' ---');
-    } else if (d.type === 'typing') {
-      showTyping(state, d.username);
-    } else if (d.type === 'userlist') {
-      renderUsers(state, d.users || []);
-    }
-  }
+      function renderUsers(state, users) {
+        var el = document.getElementById('users' + state.id);
+        if (!users.length) {
+          el.textContent = '(none)';
+          return;
+        }
+        el.textContent = users.map(function (user) {
+          return user.username;
+        }).join(', ');
+      }
 
-  function renderUsers(state, users) {
-    const el = document.getElementById('users' + state.id);
-    if (!users.length) {
-      el.textContent = '(none)';
-      return;
-    }
-    el.textContent = users.map(u => u.username).join(', ');
-  }
+      function renderMsg(state, message) {
+        var timestamp = new Date(message.timestamp).toLocaleString('en-US', {
+          hour12: false,
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit'
+        });
+        var line = document.createElement('div');
+        line.textContent = '[' + timestamp + '] ' + message.username + ': ' + message.text;
+        addNode(state, line);
+      }
 
-  function renderMsg(state, m) {
-    const t = new Date(m.timestamp).toLocaleString('en-US', {
-      hour12: false,
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
-    });
+      function updateTyping(state) {
+        var names = Array.from(state.typingUsers);
+        document.getElementById('typers' + state.id).textContent = names.length ? names.join(', ') + ' typing...' : '';
+      }
 
-    const line = document.createElement('div');
-    line.textContent = `[${t}] ${m.username}: ${m.text}`;
-    addNode(state, line);
-  }
+      function showTyping(state, username) {
+        if (!username) {
+          return;
+        }
+        state.typingUsers.add(username);
+        updateTyping(state);
+        clearTimeout(state.clearTimers[username]);
+        state.clearTimers[username] = setTimeout(function () {
+          state.typingUsers.delete(username);
+          updateTyping(state);
+        }, 2500);
+      }
 
-  function addSystemLine(state, text) {
-    const line = document.createElement('div');
-    line.textContent = text;
-    addNode(state, line);
-  }
+      function handleMessage(state, data) {
+        var err = document.getElementById('err' + state.id);
 
-  function addNode(state, node) {
-    const msgs = document.getElementById('msgs' + state.id);
-    msgs.appendChild(node);
-    msgs.scrollTop = msgs.scrollHeight;
-  }
+        if (data.type === 'error') {
+          err.textContent = data.reason || 'error';
+          state.isConnecting = false;
+          return;
+        }
 
-  function sendMessage(state) {
-    const inp = document.getElementById('m' + state.id);
-    const text = inp.value.trim();
-    if (!text || !state.ws || state.ws.readyState !== WebSocket.OPEN) return;
+        if (data.type === 'welcome') {
+          state.me = data.username;
+          state.isConnecting = false;
+          err.textContent = '';
+          document.getElementById('login' + state.id).style.display = 'none';
+          document.getElementById('chatBox' + state.id).style.display = '';
+          document.getElementById('m' + state.id).disabled = false;
+          document.getElementById('sb' + state.id).disabled = false;
+          document.getElementById('m' + state.id).focus();
+          (data.history || []).forEach(function (message) {
+            renderMsg(state, message);
+          });
+          renderUsers(state, data.users || []);
+          addSystemLine(state, '--- connected as ' + state.me + ' ---');
+          return;
+        }
 
-    state.ws.send(JSON.stringify({ type: 'message', text }));
-    inp.value = '';
-  }
+        if (data.type === 'message') {
+          renderMsg(state, data);
+        } else if (data.type === 'system') {
+          addSystemLine(state, '--- ' + data.text + ' ---');
+        } else if (data.type === 'typing') {
+          showTyping(state, data.username);
+        } else if (data.type === 'userlist') {
+          renderUsers(state, data.users || []);
+        }
+      }
 
-  function showTyping(state, username) {
-    if (!username) return;
+      function connectChat(state) {
+        var username = document.getElementById('u' + state.id).value.trim();
+        var err = document.getElementById('err' + state.id);
 
-    state.typingUsers.add(username);
-    updateTyping(state);
+        if (!username) {
+          err.textContent = 'need a name';
+          return;
+        }
+        if (state.isConnecting) {
+          return;
+        }
 
-    clearTimeout(state.clearTimers[username]);
-    state.clearTimers[username] = setTimeout(() => {
-      state.typingUsers.delete(username);
-      updateTyping(state);
-    }, 2500);
-  }
+        state.isConnecting = true;
+        err.textContent = 'connecting...';
+        state.ws = new WebSocket(state.server);
 
-  function updateTyping(state) {
-    const names = [...state.typingUsers];
-    document.getElementById('typers' + state.id).textContent =
-      names.length ? names.join(', ') + ' typing...' : '';
-  }
+        state.ws.onopen = function () {
+          state.ws.send(JSON.stringify({ type: 'join', username: username }));
+          state.ping = setInterval(function () {
+            if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+              state.ws.send(JSON.stringify({ type: 'ping' }));
+            }
+          }, 25000);
+        };
 
-  document.getElementById('u1').addEventListener('keydown', e => {
-    if (e.key === 'Enter') connectChat(chat1State);
-  });
+        state.ws.onmessage = function (event) {
+          var data;
+          try {
+            data = JSON.parse(event.data);
+          } catch (error) {
+            return;
+          }
+          handleMessage(state, data);
+        };
 
-  document.getElementById('u2').addEventListener('keydown', e => {
-    if (e.key === 'Enter') connectChat(chat2State);
-  });
+        state.ws.onerror = function () {
+          err.textContent = 'connection failed';
+          state.isConnecting = false;
+        };
 
-  document.getElementById('m1').addEventListener('keydown', e => {
-    if (e.key === 'Enter') {
-      sendMessage(chat1State);
-      return;
-    }
-    if (chat1State.ws?.readyState === WebSocket.OPEN) {
-      chat1State.ws.send(JSON.stringify({ type: 'typing' }));
-    }
-  });
+        state.ws.onclose = function () {
+          state.isConnecting = false;
+          clearInterval(state.ping);
+          state.ping = null;
+          state.ws = null;
+          document.getElementById('m' + state.id).disabled = true;
+          document.getElementById('sb' + state.id).disabled = true;
+          document.getElementById('reconnectBtn' + state.id).style.display = '';
+          addSystemLine(state, '--- disconnected ---');
+        };
+      }
+      window.connectChat = connectChat;
 
-  document.getElementById('m2').addEventListener('keydown', e => {
-    if (e.key === 'Enter') {
-      sendMessage(chat2State);
-      return;
-    }
-    if (chat2State.ws?.readyState === WebSocket.OPEN) {
-      chat2State.ws.send(JSON.stringify({ type: 'typing' }));
-    }
-  });
-</script>
+      function reloadChat(state) {
+        state.me = null;
+        document.getElementById('chatBox' + state.id).style.display = 'none';
+        document.getElementById('login' + state.id).style.display = '';
+        document.getElementById('reconnectBtn' + state.id).style.display = 'none';
+        document.getElementById('msgs' + state.id).innerHTML = '';
+        document.getElementById('err' + state.id).textContent = '';
+      }
+      window.reloadChat = reloadChat;
+
+      function sendMessage(state) {
+        var input = document.getElementById('m' + state.id);
+        var text = input.value.trim();
+        if (!text || !state.ws || state.ws.readyState !== WebSocket.OPEN) {
+          return;
+        }
+        state.ws.send(JSON.stringify({ type: 'message', text: text }));
+        input.value = '';
+      }
+      window.sendMessage = sendMessage;
+
+      function setupChat() {
+        if (chatInput1) {
+          chatInput1.onkeydown = function (event) {
+            if (event.key === 'Enter') {
+              connectChat(chat1State);
+            }
+          };
+        }
+        if (chatInput2) {
+          chatInput2.onkeydown = function (event) {
+            if (event.key === 'Enter') {
+              connectChat(chat2State);
+            }
+          };
+        }
+        if (messageInput1) {
+          messageInput1.onkeydown = function (event) {
+            if (event.key === 'Enter') {
+              sendMessage(chat1State);
+              return;
+            }
+            if (chat1State.ws && chat1State.ws.readyState === WebSocket.OPEN) {
+              chat1State.ws.send(JSON.stringify({ type: 'typing' }));
+            }
+          };
+        }
+        if (messageInput2) {
+          messageInput2.onkeydown = function (event) {
+            if (event.key === 'Enter') {
+              sendMessage(chat2State);
+              return;
+            }
+            if (chat2State.ws && chat2State.ws.readyState === WebSocket.OPEN) {
+              chat2State.ws.send(JSON.stringify({ type: 'typing' }));
+            }
+          };
+        }
+      }
+
+      function loadFaq() {
+        if (!faqList) {
+          return;
+        }
+        faqList.textContent = 'Loading FAQ...';
+        fetch('/faq.json')
+          .then(function (response) {
+            if (!response.ok) {
+              throw new Error('faq.json not found');
+            }
+            return response.json();
+          })
+          .then(function (items) {
+            faqList.innerHTML = '';
+            if (!Array.isArray(items) || !items.length) {
+              faqList.textContent = 'No FAQ entries yet.';
+              return;
+            }
+            for (var i = 0; i < items.length; i += 1) {
+              var q = document.createElement('div');
+              var a = document.createElement('div');
+              q.innerHTML = '<b>Q:</b> ' + (items[i].q || '');
+              a.innerHTML = '<b>A:</b> ' + (items[i].a || '');
+              faqList.appendChild(q);
+              faqList.appendChild(a);
+            }
+          })
+          .catch(function () {
+            faqList.textContent = '(nothing yet)';
+          });
+      }
+
+      setupTabs();
+      setupTheme();
+      setupSearch();
+      setupChat();
+      switchTab('about');
+      switchChatTab('chat1');
+      loadFaq();
+
+      console.assert(typeof switchTab === 'function', 'switchTab should exist');
+      console.assert(document.getElementById('about').className.indexOf('active') > -1, 'Home tab should be active');
+      console.assert(document.querySelectorAll('#gameList a').length === 10, 'All original HTML5 games should be present');
+      console.assert(typeof connectChat === 'function', 'Full chat interface should be present');
+      console.assert(document.getElementById('faqList') !== null, 'FAQ should be present');
+    })();
+  </script>
 </body>
 </html>
