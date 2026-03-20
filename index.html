@@ -5,47 +5,25 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Unblocked Library</title>
+
   <style>
     body { margin: 10px; line-height: 1.25; max-width: 760px; }
     body.dark { background: #0b0f14; color: #e6edf3; }
     body.dark a { color: #8ab4ff; }
     body.dark input,
     body.dark button { background: #111823; color: #e6edf3; border: 1px solid #2a3441; }
-    body.dark .msgs { border-color: #2a3441 !important; }
 
     .tab { display: none; }
     .tab.active { display: block; }
 
     .tabs { margin: 4px 0 6px; }
-    .tabs button { margin-right: 0; padding: 2px 6px; }
-
-    .home-block { margin-top: 10px; }
-    .status-line { margin: 2px 0; }
-    .quick-links { margin-top: 6px; }
-    .quick-links a { display: block; margin: 1px 0; }
+    .tabs button { padding: 2px 6px; }
 
     h2 { margin: 6px 0 4px; font-size: 24px; }
-    p { margin: 0; }
     h3 { margin: 8px 0 2px; font-size: 18px; }
 
-    ol, ul { margin: 4px 0; padding-left: 18px; }
-    input,
-    button { margin: 0; }
-
-    #about a,
-    #gameList a,
-    #proxyLinks a { line-height: 1.1; }
-
-    .news-stream { margin-top: 6px; }
     .news-item { border: 1px solid #ccc; padding: 6px 8px; margin-top: 6px; }
-    .news-date { font-size: 12px; opacity: 0.8; }
     body.dark .news-item { border-color: #2a3441; background: #111823; }
-
-    .faq-item { margin: 10px 0; }
-    .faq-item div { font-size: 13px; }
-
-    .proxy-link-item { margin: 6px 0; }
-    .proxy-link-note { font-size: 12px; opacity: 0.8; }
 
     .status-online { color: #2ecc71; }
     .status-offline { color: #e74c3c; }
@@ -54,743 +32,222 @@
     body.dark .status-online { color: #4cd964; }
     body.dark .status-offline { color: #ff6b6b; }
     body.dark .status-unstable { color: #ffd93d; }
+
+    footer { margin-top: 20px; font-size: 12px; opacity: 0.7; }
   </style>
 </head>
+
 <body>
-  <h1>unblocked library</h1>
-
-  <label><input type="checkbox" id="themeToggle"> dark mode</label>
-
-  <div class="tabs">
-    <button type="button" data-tab="about">home</button><button type="button" data-tab="proxy">proxy</button><button type="button" data-tab="arcade">arcade</button><button type="button" data-tab="flash">flash</button><button type="button" data-tab="html5">html5</button><button type="button" data-tab="chat">chat</button><button type="button" data-tab="requests">requests &amp; faq</button>
-  </div>
-
-  <div id="about" class="tab active">
-    <div class="home-block">
-      <h2>status</h2>
-      <div class="status-line"><b>proxy:</b> <span id="proxyStatus">(loading)</span></div>
-      <div class="status-line"><b>chat:</b> <span id="chatStatus">(loading)</span></div>
-    </div>
-
-    <div class="home-block quick-links">
-      <h2>quick links</h2>
-      <div id="quickLinks">(loading)</div>
-    </div>
-
-    <div class="home-block">
-      <h2>news</h2>
-      <div id="newsList" class="news-stream">(loading)</div>
-    </div>
-  </div>
-
-  <div id="proxy" class="tab">
-    <div class="home-block">
-      <h2>proxy</h2>
-      <div id="proxyLinks">(loading)</div>
-    </div>
-
-    <div class="home-block">
-      <h2>proxy tips and limitations</h2>
-      <p>this page is for notable limitations and uses of the proxy. unless otherwise mentioned, any links listed here should be opened inside the proxy, not directly.</p>
-
-      <h3>useful sites that are unblocked</h3>
-      <ul>
-        <li><b>internet archive (archive.org)</b> -- useful for books, archived webpages, movies, and more.</li>
-        <li><b>social media</b> -- instagram and tiktok seem to work through scramjet.</li>
-        <li><b>duckduckgo</b> -- type duckduckgo.com into the search bar after launching scramjet. it works better than google, which often throws captchas.</li>
-      </ul>
-
-      <h3>dealing with roadblocks / tips</h3>
-      <ul>
-        <li><b>tip #1: layer it.</b> if a site is still blocked, try opening a virtual browser inside the proxy. it can be laggy, but it sometimes works for sites like reddit.</li>
-        <li><b>tip #2: remember your info.</b> if a site needs login, make sure you know your username and password.</li>
-        <li><b>tip #3: don't be an idiot.</b> don't loudly advertise this in class. use it as a tool, not for dumb stuff.</li>
-      </ul>
-
-      <p>if the proxy doesn't work at all, sorry. if it does, have fun.</p>
-    </div>
-  </div>
-
-  <div id="arcade" class="tab">
-    <p>Download a ROM for the right system, then load it in the emulator below.</p>
-    <ol>
-      <li>Find a ROM for the correct system. <a href="https://github.com/Shugabuga/RomCollection/">This archive</a> is a good start. You can also use the <a href="https://m3tr0m0l4.github.io/r-Roms.github.io/">r/roms megathread</a>.</li>
-      <li>Make sure the file matches the system you want to run.</li>
-      <li>Open the emulator below.</li>
-      <li>Upload the file and play.</li>
-    </ol>
-    <iframe src="/arcade/" title="Arcade Emulator" style="width:100%;height:600px;border:1px solid"></iframe>
-  </div>
-
-  <div id="flash" class="tab">
-    <p>Download a .swf file, then load it in the player below.</p>
-    <ol>
-      <li>Find a Flash game .swf from an archive like <a href="https://github.com/selenite-cc/flasharchive">selenite flasharchive</a> or <a href="https://github.com/BinBashBanana/gstore">gstore</a>.</li>
-      <li>Download the file.</li>
-      <li>Upload it in the player below, or use <a href="/flashplayer/">the standalone player</a>.</li>
-      <li>Go fullscreen and play.</li>
-    </ol>
-    <iframe src="/flashplayer/" title="Flash Player" style="width:100%;height:500px;border:1px solid"></iframe>
-  </div>
-
-  <div id="html5" class="tab">
-    <p>Direct browser games that do not need ROM or SWF uploads.</p>
-    <label for="search">Search HTML5 games:</label>
-    <input id="search" placeholder="search html5 games">
-    <div id="gameList">(loading)</div>
-  </div>
-
-  <div id="chat" class="tab">
-    <div class="chat-tab-buttons">
-      <button type="button" onclick="switchChatTab('chat1')">Chat 1</button><button type="button" onclick="switchChatTab('chat2')">Chat 2</button>
-    </div>
-
-    <div id="chat1" class="chat-subtab">
-      <h3>Chat 1</h3>
-      <div id="login1">
-        Name: <input id="u1" maxlength="20">
-        <button type="button" onclick="if (chat1State) connectChat(chat1State)">Connect</button>
-        <span id="err1" style="color:red"></span>
-      </div>
-      <div id="chatBox1" style="display:none">
-        <div style="margin:6px 0;font-family:monospace;font-size:12px;">Users online: <span id="users1">(loading)</span></div>
-        <div id="msgs1" class="msgs" style="height:200px;overflow-y:auto;border:1px solid #ccc;padding:4px;font-family:monospace;font-size:13px;margin-top:6px"></div>
-        <div id="typers1" style="font-size:11px;color:gray;height:16px"></div>
-        <input id="m1" style="width:400px" placeholder="message..." disabled>
-        <button type="button" id="sb1" onclick="if (chat1State) sendMessage(chat1State)" disabled>Send</button>
-        <button type="button" id="reconnectBtn1" onclick="if (chat1State) reloadChat(chat1State)" style="display:none">Reconnect</button>
-      </div>
-    </div>
-
-    <div id="chat2" class="chat-subtab" style="display:none">
-      <h3>Chat 2</h3>
-      <div id="login2">
-        Name: <input id="u2" maxlength="20">
-        <button type="button" onclick="if (chat2State) connectChat(chat2State)">Connect</button>
-        <span id="err2" style="color:red"></span>
-      </div>
-      <div id="chatBox2" style="display:none">
-        <div style="margin:6px 0;font-family:monospace;font-size:12px;">Users online: <span id="users2">(loading)</span></div>
-        <div id="msgs2" class="msgs" style="height:200px;overflow-y:auto;border:1px solid #ccc;padding:4px;font-family:monospace;font-size:13px;margin-top:6px"></div>
-        <div id="typers2" style="font-size:11px;color:gray;height:16px"></div>
-        <input id="m2" style="width:400px" placeholder="message..." disabled>
-        <button type="button" id="sb2" onclick="if (chat2State) sendMessage(chat2State)" disabled>Send</button>
-        <button type="button" id="reconnectBtn2" onclick="if (chat2State) reloadChat(chat2State)" style="display:none">Reconnect</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="requests" class="tab">
-    <p><a href="https://forms.gle/LjYg4BHPPaZuewUg6">request form (anonymous)</a></p>
-    <h3>faq</h3>
-    <div id="faqList"></div>
-  </div>
-
-  <script>
-    (function () {
-      var themeToggle = document.getElementById('themeToggle');
-      var searchInput = document.getElementById('search');
-      var faqList = document.getElementById('faqList');
-      var newsList = document.getElementById('newsList');
-      var quickLinks = document.getElementById('quickLinks');
-      var proxyLinks = document.getElementById('proxyLinks');
-      var gameList = document.getElementById('gameList');
-      var chatInput1 = document.getElementById('u1');
-      var chatInput2 = document.getElementById('u2');
-      var messageInput1 = document.getElementById('m1');
-      var messageInput2 = document.getElementById('m2');
-
-      var chat1State = null;
-      var chat2State = null;
-      window.chat1State = chat1State;
-      window.chat2State = chat2State;
-
-      function showOnly(selector, activeId, visibleDisplay) {
-        var nodes = document.querySelectorAll(selector);
-        for (var i = 0; i < nodes.length; i += 1) {
-          nodes[i].style.display = nodes[i].id === activeId ? visibleDisplay : 'none';
-        }
-      }
-
-      function switchTab(id) {
-        var tabs = document.querySelectorAll('.tab');
-        for (var i = 0; i < tabs.length; i += 1) {
-          tabs[i].className = tabs[i].id === id ? 'tab active' : 'tab';
-          tabs[i].style.display = tabs[i].id === id ? 'block' : 'none';
-        }
-        return !!document.getElementById(id);
-      }
-      window.switchTab = switchTab;
-
-      function switchChatTab(id) {
-        showOnly('.chat-subtab', id, 'block');
-      }
-      window.switchChatTab = switchChatTab;
-
-      function applyTheme(isDark) {
-        document.body.classList.toggle('dark', !!isDark);
-        if (themeToggle) {
-          themeToggle.checked = !!isDark;
-        }
-        try {
-          localStorage.setItem('d', isDark ? '1' : '0');
-        } catch (error) {}
-      }
-
-      function setupTabs() {
-        var tabButtons = document.querySelectorAll('.tabs button[data-tab]');
-        for (var i = 0; i < tabButtons.length; i += 1) {
-          tabButtons[i].onclick = function (event) {
-            if (event) {
-              event.preventDefault();
-            }
-            switchTab(this.getAttribute('data-tab'));
-          };
-        }
-      }
-
-      function setupTheme() {
-        var isDark = false;
-        try {
-          isDark = localStorage.getItem('d') === '1';
-        } catch (error) {}
-        applyTheme(isDark);
-        if (themeToggle) {
-          themeToggle.onchange = function () {
-            applyTheme(themeToggle.checked);
-          };
-        }
-      }
-
-      function setupSearch() {
-        if (!searchInput) {
-          return;
-        }
-        searchInput.oninput = function () {
-          var query = searchInput.value.toLowerCase();
-          var links = document.querySelectorAll('#gameList a');
-          for (var i = 0; i < links.length; i += 1) {
-            links[i].style.display = links[i].textContent.toLowerCase().indexOf(query) > -1 ? '' : 'none';
-          }
-        };
-      }
-
-      function applyStatus(elementId, item) {
-        var el = document.getElementById(elementId);
-        if (!el || !item) {
-          return;
-        }
-
-        el.classList.remove('status-online', 'status-offline', 'status-unstable');
-
-        if (item.online === true) {
-          el.classList.add('status-online');
-          el.textContent = 'online';
-        } else if (item.online === 'unstable') {
-          el.classList.add('status-unstable');
-          el.textContent = item.message ? 'unstable, ' + item.message : 'unstable';
-        } else {
-          el.classList.add('status-offline');
-          el.textContent = item.message ? 'offline, ' + item.message : 'offline';
-        }
-      }
-
-      function loadStatus() {
-        fetch('/status.json')
-          .then(function (response) {
-            if (!response.ok) {
-              throw new Error('status.json not found');
-            }
-            return response.json();
-          })
-          .then(function (data) {
-            applyStatus('proxyStatus', data.proxy);
-            applyStatus('chatStatus', data.chat);
-          })
-          .catch(function () {
-            var proxy = document.getElementById('proxyStatus');
-            var chat = document.getElementById('chatStatus');
-            if (proxy) proxy.textContent = '(nothing yet)';
-            if (chat) chat.textContent = '(nothing yet)';
-          });
-      }
-
-      function loadNews() {
-        if (!newsList) {
-          return;
-        }
-
-        newsList.textContent = '(loading)';
-
-        fetch('/news.json')
-          .then(function (response) {
-            if (!response.ok) {
-              throw new Error('news.json not found');
-            }
-            return response.json();
-          })
-          .then(function (items) {
-            newsList.innerHTML = '';
-
-            if (!Array.isArray(items) || !items.length) {
-              newsList.textContent = '(nothing yet)';
-              return;
-            }
-
-            for (var i = 0; i < items.length; i += 1) {
-              var item = items[i] || {};
-              var wrap = document.createElement('div');
-              var date = document.createElement('div');
-              var title = document.createElement('div');
-              var body = document.createElement('div');
-
-              wrap.className = 'news-item';
-              date.className = 'news-date';
-              date.textContent = item.date || '';
-              title.innerHTML = '<b>' + (item.title || '') + '</b>';
-              body.textContent = item.text || '';
-
-              wrap.appendChild(date);
-              wrap.appendChild(title);
-              wrap.appendChild(body);
-              newsList.appendChild(wrap);
-            }
-          })
-          .catch(function () {
-            newsList.textContent = '(nothing yet)';
-          });
-      }
-
-      function loadQuickLinks() {
-        if (!quickLinks) {
-          return;
-        }
-
-        quickLinks.textContent = '(loading)';
-
-        fetch('/quicklinks.json')
-          .then(function (response) {
-            if (!response.ok) {
-              throw new Error('quicklinks.json not found');
-            }
-            return response.json();
-          })
-          .then(function (items) {
-            quickLinks.innerHTML = '';
-
-            if (!Array.isArray(items) || !items.length) {
-              quickLinks.textContent = '(nothing yet)';
-              return;
-            }
-
-            for (var i = 0; i < items.length; i += 1) {
-              var item = items[i] || {};
-              var link = document.createElement('a');
-              link.href = item.href || '#';
-              link.textContent = item.label || '(untitled)';
-              quickLinks.appendChild(link);
-            }
-          })
-          .catch(function () {
-            quickLinks.textContent = '(nothing yet)';
-          });
-      }
-
-      function loadProxyLinks() {
-        if (!proxyLinks) {
-          return;
-        }
-
-        proxyLinks.textContent = '(loading)';
-
-        fetch('/proxies.json')
-          .then(function (response) {
-            if (!response.ok) {
-              throw new Error('proxies.json not found');
-            }
-            return response.json();
-          })
-          .then(function (items) {
-            proxyLinks.innerHTML = '';
-
-            if (!Array.isArray(items) || !items.length) {
-              proxyLinks.textContent = '(nothing yet)';
-              return;
-            }
-
-            for (var i = 0; i < items.length; i += 1) {
-              var item = items[i] || {};
-              var wrap = document.createElement('div');
-              var link = document.createElement('a');
-
-              wrap.className = 'proxy-link-item';
-              link.href = item.href || '#';
-              link.textContent = item.label || '(untitled)';
-              wrap.appendChild(link);
-
-              if (item.note) {
-                var note = document.createElement('div');
-                note.className = 'proxy-link-note';
-                note.textContent = item.note;
-                wrap.appendChild(note);
-              }
-
-              proxyLinks.appendChild(wrap);
-            }
-          })
-          .catch(function () {
-            proxyLinks.textContent = '(nothing yet)';
-          });
-      }
-
-      function loadGames() {
-        if (!gameList) {
-          return;
-        }
-
-        gameList.textContent = '(loading)';
-
-        fetch('/games.json')
-          .then(function (response) {
-            if (!response.ok) {
-              throw new Error('games.json not found');
-            }
-            return response.json();
-          })
-          .then(function (items) {
-            gameList.innerHTML = '';
-
-            if (!Array.isArray(items) || !items.length) {
-              gameList.textContent = '(nothing yet)';
-              return;
-            }
-
-            for (var i = 0; i < items.length; i += 1) {
-              var item = items[i] || {};
-              var link = document.createElement('a');
-              link.href = item.href || '#';
-              link.textContent = item.label || '(untitled)';
-              gameList.appendChild(link);
-
-              if (i < items.length - 1) {
-                gameList.appendChild(document.createElement('br'));
-              }
-            }
-          })
-          .catch(function () {
-            gameList.textContent = '(nothing yet)';
-          });
-      }
-
-      function makeChatState(id, server) {
-        return {
-          id: id,
-          server: server,
-          ws: null,
-          me: null,
-          ping: null,
-          isConnecting: false,
-          typingUsers: new Set(),
-          clearTimers: {}
-        };
-      }
-
-      function loadChatConfig() {
-        return fetch('/config.json')
-          .then(function (response) {
-            if (!response.ok) {
-              throw new Error('config.json not found');
-            }
-            return response.json();
-          })
-          .then(function (config) {
-            var chat = config.chat || {};
-
-            chat1State = makeChatState(1, chat.server1);
-            chat2State = makeChatState(2, chat.server2);
-
-            window.chat1State = chat1State;
-            window.chat2State = chat2State;
-          })
-          .catch(function () {
-            console.error('Failed to load config.json');
-          });
-      }
-
-      function addNode(state, node) {
-        var msgs = document.getElementById('msgs' + state.id);
-        msgs.appendChild(node);
-        msgs.scrollTop = msgs.scrollHeight;
-      }
-
-      function addSystemLine(state, text) {
-        var line = document.createElement('div');
-        line.textContent = text;
-        addNode(state, line);
-      }
-
-      function renderUsers(state, users) {
-        var el = document.getElementById('users' + state.id);
-        if (!users.length) {
-          el.textContent = '(none)';
-          return;
-        }
-        el.textContent = users.map(function (user) {
-          return user.username;
-        }).join(', ');
-      }
-
-      function renderMsg(state, message) {
-        var timestamp = new Date(message.timestamp).toLocaleString('en-US', {
-          hour12: false,
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit'
-        });
-        var line = document.createElement('div');
-        line.textContent = '[' + timestamp + '] ' + message.username + ': ' + message.text;
-        addNode(state, line);
-      }
-
-      function updateTyping(state) {
-        var names = Array.from(state.typingUsers);
-        document.getElementById('typers' + state.id).textContent = names.length ? names.join(', ') + ' typing...' : '';
-      }
-
-      function showTyping(state, username) {
-        if (!username) {
-          return;
-        }
-        state.typingUsers.add(username);
-        updateTyping(state);
-        clearTimeout(state.clearTimers[username]);
-        state.clearTimers[username] = setTimeout(function () {
-          state.typingUsers.delete(username);
-          updateTyping(state);
-        }, 2500);
-      }
-
-      function handleMessage(state, data) {
-        var err = document.getElementById('err' + state.id);
-
-        if (data.type === 'error') {
-          err.textContent = data.reason || 'error';
-          state.isConnecting = false;
-          return;
-        }
-
-        if (data.type === 'welcome') {
-          state.me = data.username;
-          state.isConnecting = false;
-          err.textContent = '';
-          document.getElementById('login' + state.id).style.display = 'none';
-          document.getElementById('chatBox' + state.id).style.display = '';
-          document.getElementById('m' + state.id).disabled = false;
-          document.getElementById('sb' + state.id).disabled = false;
-          document.getElementById('m' + state.id).focus();
-          (data.history || []).forEach(function (message) {
-            renderMsg(state, message);
-          });
-          renderUsers(state, data.users || []);
-          addSystemLine(state, '--- connected as ' + state.me + ' ---');
-          return;
-        }
-
-        if (data.type === 'message') {
-          renderMsg(state, data);
-        } else if (data.type === 'system') {
-          addSystemLine(state, '--- ' + data.text + ' ---');
-        } else if (data.type === 'typing') {
-          showTyping(state, data.username);
-        } else if (data.type === 'userlist') {
-          renderUsers(state, data.users || []);
-        }
-      }
-
-      function connectChat(state) {
-        if (!state || !state.server) {
-          return;
-        }
-
-        var username = document.getElementById('u' + state.id).value.trim();
-        var err = document.getElementById('err' + state.id);
-
-        if (!username) {
-          err.textContent = 'need a name';
-          return;
-        }
-        if (state.isConnecting) {
-          return;
-        }
-
-        state.isConnecting = true;
-        err.textContent = 'connecting...';
-        state.ws = new WebSocket(state.server);
-
-        state.ws.onopen = function () {
-          state.ws.send(JSON.stringify({ type: 'join', username: username }));
-          state.ping = setInterval(function () {
-            if (state.ws && state.ws.readyState === WebSocket.OPEN) {
-              state.ws.send(JSON.stringify({ type: 'ping' }));
-            }
-          }, 25000);
-        };
-
-        state.ws.onmessage = function (event) {
-          var data;
-          try {
-            data = JSON.parse(event.data);
-          } catch (error) {
-            return;
-          }
-          handleMessage(state, data);
-        };
-
-        state.ws.onerror = function () {
-          err.textContent = 'connection failed';
-          state.isConnecting = false;
-        };
-
-        state.ws.onclose = function () {
-          state.isConnecting = false;
-          clearInterval(state.ping);
-          state.ping = null;
-          state.ws = null;
-          document.getElementById('m' + state.id).disabled = true;
-          document.getElementById('sb' + state.id).disabled = true;
-          document.getElementById('reconnectBtn' + state.id).style.display = '';
-          addSystemLine(state, '--- disconnected ---');
-        };
-      }
-      window.connectChat = connectChat;
-
-      function reloadChat(state) {
-        if (!state) {
-          return;
-        }
-        state.me = null;
-        document.getElementById('chatBox' + state.id).style.display = 'none';
-        document.getElementById('login' + state.id).style.display = '';
-        document.getElementById('reconnectBtn' + state.id).style.display = 'none';
-        document.getElementById('msgs' + state.id).innerHTML = '';
-        document.getElementById('err' + state.id).textContent = '';
-      }
-      window.reloadChat = reloadChat;
-
-      function sendMessage(state) {
-        if (!state) {
-          return;
-        }
-        var input = document.getElementById('m' + state.id);
-        var text = input.value.trim();
-        if (!text || !state.ws || state.ws.readyState !== WebSocket.OPEN) {
-          return;
-        }
-        state.ws.send(JSON.stringify({ type: 'message', text: text }));
-        input.value = '';
-      }
-      window.sendMessage = sendMessage;
-
-      function setupChat() {
-        if (chatInput1) {
-          chatInput1.onkeydown = function (event) {
-            if (event.key === 'Enter' && chat1State) {
-              connectChat(chat1State);
-            }
-          };
-        }
-        if (chatInput2) {
-          chatInput2.onkeydown = function (event) {
-            if (event.key === 'Enter' && chat2State) {
-              connectChat(chat2State);
-            }
-          };
-        }
-        if (messageInput1) {
-          messageInput1.onkeydown = function (event) {
-            if (event.key === 'Enter') {
-              if (chat1State) sendMessage(chat1State);
-              return;
-            }
-            if (chat1State && chat1State.ws && chat1State.ws.readyState === WebSocket.OPEN) {
-              chat1State.ws.send(JSON.stringify({ type: 'typing' }));
-            }
-          };
-        }
-        if (messageInput2) {
-          messageInput2.onkeydown = function (event) {
-            if (event.key === 'Enter') {
-              if (chat2State) sendMessage(chat2State);
-              return;
-            }
-            if (chat2State && chat2State.ws && chat2State.ws.readyState === WebSocket.OPEN) {
-              chat2State.ws.send(JSON.stringify({ type: 'typing' }));
-            }
-          };
-        }
-      }
-
-      function loadFaq() {
-        if (!faqList) {
-          return;
-        }
-        faqList.textContent = 'Loading FAQ...';
-        fetch('/faq.json')
-          .then(function (response) {
-            if (!response.ok) {
-              throw new Error('faq.json not found');
-            }
-            return response.json();
-          })
-          .then(function (items) {
-            faqList.innerHTML = '';
-            if (!Array.isArray(items) || !items.length) {
-              faqList.textContent = '(nothing yet)';
-              return;
-            }
-            for (var i = 0; i < items.length; i += 1) {
-              var wrap = document.createElement('div');
-              wrap.className = 'faq-item';
-              var q = document.createElement('div');
-              var a = document.createElement('div');
-              q.innerHTML = '<b>Q:</b> ' + (items[i].q || '');
-              a.innerHTML = '<b>A:</b> ' + (items[i].a || '');
-              wrap.appendChild(q);
-              wrap.appendChild(a);
-              faqList.appendChild(wrap);
-            }
-          })
-          .catch(function () {
-            faqList.textContent = '(nothing yet)';
-          });
-      }
-
-      setupTabs();
-      setupTheme();
-      setupSearch();
-      setupChat();
-      loadChatConfig();
-      loadStatus();
-      loadNews();
-      loadQuickLinks();
-      loadProxyLinks();
-      loadGames();
-      switchTab('about');
-      switchChatTab('chat1');
-      loadFaq();
-
-      console.assert(typeof switchTab === 'function', 'switchTab should exist');
-      console.assert(document.getElementById('about').className.indexOf('active') > -1, 'Home tab should be active');
-      console.assert(typeof connectChat === 'function', 'Full chat interface should be present');
-      console.assert(document.getElementById('faqList') !== null, 'FAQ should be present');
-      console.assert(document.getElementById('newsList') !== null, 'News should be present');
-      console.assert(document.getElementById('quickLinks') !== null, 'Quick links should be present');
-      console.assert(document.getElementById('proxyLinks') !== null, 'Proxy links should be present');
-      console.assert(document.getElementById('gameList') !== null, 'Games should be present');
-    })();
-  </script>
+
+<h1>unblocked library</h1>
+
+<label><input type="checkbox" id="themeToggle"> dark mode</label>
+
+<div class="tabs">
+<button data-tab="about">home</button><button data-tab="proxy">proxy</button><button data-tab="arcade">arcade</button><button data-tab="flash">flash</button><button data-tab="html5">html5</button><button data-tab="chat">chat</button><button data-tab="requests">requests & faq</button>
+</div>
+
+<!-- HOME -->
+<div id="about" class="tab active">
+
+<h2>status</h2>
+<div><b>proxy:</b> <span id="proxyStatus">(loading)</span></div>
+<div><b>chat:</b> <span id="chatStatus">(loading)</span></div>
+
+<h2>quick links</h2>
+<div id="quickLinks">(loading)</div>
+
+<h2>news</h2>
+<div id="newsList">(loading)</div>
+
+</div>
+
+<!-- PROXY -->
+<div id="proxy" class="tab">
+
+<h2>proxy</h2>
+<div id="proxyLinks">(loading)</div>
+
+<h2>proxy tips and limitations</h2>
+
+<p>this page is dedicated to logging some notable limitations and uses of the proxy. note that any links given, unless otherwise mentioned, should be accessed within the proxy<br><br></p>
+
+<h3>useful sites that are unblocked!</h3>
+<ul>
+<li><b>internet archive (archive.org)</b> -- incredibly useful for books, webpage archives, movies; basically anything</li>
+<li><b>social media</b> -- instagram and tiktok seem to work fine</li>
+<li><b>duckduckgo</b> -- works better than google (no captchas)</li>
+</ul>
+
+<h3>tips</h3>
+<ul>
+<li><b>layer it</b> -- use virtual browsers if blocked</li>
+<li><b>remember your login</b></li>
+<li><b>don’t be dumb</b></li>
+</ul>
+
+</div>
+
+<!-- HTML5 -->
+<div id="html5" class="tab">
+<input id="search" placeholder="search html5 games">
+<div id="gameList">(loading)</div>
+</div>
+
+<!-- REQUESTS -->
+<div id="requests" class="tab">
+<a href="https://forms.gle/LjYg4BHPPaZuewUg6">request form (anonymous)</a>
+<h3>faq</h3>
+<div id="faqList"></div>
+</div>
+
+<footer id="lastUpdated">(loading)</footer>
+
+<script>
+(function(){
+
+/* tabs */
+function switchTab(id){
+  document.querySelectorAll('.tab').forEach(t=>{
+    t.className = t.id===id ? 'tab active' : 'tab';
+    t.style.display = t.id===id ? 'block' : 'none';
+  });
+}
+document.querySelectorAll('.tabs button').forEach(b=>{
+  b.onclick = ()=>switchTab(b.dataset.tab);
+});
+
+/* theme */
+const toggle=document.getElementById('themeToggle');
+function applyTheme(on){
+  document.body.classList.toggle('dark',on);
+  localStorage.setItem('d',on?'1':'0');
+  toggle.checked=on;
+}
+applyTheme(localStorage.getItem('d')==='1');
+toggle.onchange=()=>applyTheme(toggle.checked);
+
+/* status */
+function applyStatus(id,obj){
+  const el=document.getElementById(id);
+  if(!el||!obj)return;
+
+  el.className='';
+
+  if(obj.online===true){
+    el.classList.add('status-online');
+    el.textContent='online';
+  }
+  else if(obj.online==='unstable'){
+    el.classList.add('status-unstable');
+    el.textContent=obj.message ? 'unstable, '+obj.message : 'unstable';
+  }
+  else{
+    el.classList.add('status-offline');
+    el.textContent=obj.message ? 'offline, '+obj.message : 'offline';
+  }
+}
+
+fetch('/content/status.json')
+.then(r=>r.json())
+.then(d=>{
+  applyStatus('proxyStatus',d.proxy);
+  applyStatus('chatStatus',d.chat);
+});
+
+/* news */
+fetch('/content/news.json')
+.then(r=>r.json())
+.then(items=>{
+  const el=document.getElementById('newsList');
+  el.innerHTML='';
+  items.forEach(n=>{
+    const d=document.createElement('div');
+    d.className='news-item';
+    d.innerHTML=`${n.date}<br><b>${n.title}</b><br>${n.text}`;
+    el.appendChild(d);
+  });
+});
+
+/* quick links */
+fetch('/content/quicklinks.json')
+.then(r=>r.json())
+.then(items=>{
+  const el=document.getElementById('quickLinks');
+  el.innerHTML='';
+  items.forEach(i=>{
+    const a=document.createElement('a');
+    a.href=i.href;
+    a.textContent=i.label;
+    el.appendChild(a);
+  });
+});
+
+/* proxy links */
+fetch('/content/proxies.json')
+.then(r=>r.json())
+.then(items=>{
+  const el=document.getElementById('proxyLinks');
+  el.innerHTML='';
+  items.forEach(i=>{
+    const a=document.createElement('a');
+    a.href=i.href;
+    a.textContent=i.label;
+    el.appendChild(a);
+  });
+});
+
+/* games */
+fetch('/content/games.json')
+.then(r=>r.json())
+.then(items=>{
+  const el=document.getElementById('gameList');
+  el.innerHTML='';
+  items.forEach(g=>{
+    const a=document.createElement('a');
+    a.href=g.href;
+    a.textContent=g.label;
+    el.appendChild(a);
+    el.appendChild(document.createElement('br'));
+  });
+});
+
+/* search */
+document.getElementById('search').oninput=function(){
+  const q=this.value.toLowerCase();
+  document.querySelectorAll('#gameList a').forEach(a=>{
+    a.style.display=a.textContent.toLowerCase().includes(q)?'':'none';
+  });
+};
+
+/* faq */
+fetch('/content/faq.json')
+.then(r=>r.json())
+.then(items=>{
+  const el=document.getElementById('faqList');
+  el.innerHTML='';
+  items.forEach(i=>{
+    const d=document.createElement('div');
+    d.innerHTML=`<b>Q:</b> ${i.q}<br><b>A:</b> ${i.a}`;
+    el.appendChild(d);
+  });
+});
+
+/* last updated (automatic) */
+fetch(window.location.href,{method:'HEAD'})
+.then(res=>{
+  const lm=res.headers.get('Last-Modified');
+  if(!lm)return;
+  const d=new Date(lm);
+  document.getElementById('lastUpdated').textContent=
+    'last updated: '+
+    String(d.getMonth()+1).padStart(2,'0')+'/'+
+    String(d.getDate()).padStart(2,'0')+'/'+
+    d.getFullYear();
+});
+
+})();
+</script>
+
 </body>
 </html>
