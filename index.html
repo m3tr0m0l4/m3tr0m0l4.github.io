@@ -26,14 +26,15 @@
 
     h2 { margin: 6px 0 4px; font-size: 24px; }
     p { margin: 0; }
-    h3 { margin: 0; font-size: 18px; }
+    h3 { margin: 8px 0 2px; font-size: 18px; }
 
-    ol { margin: 4px 0; padding-left: 18px; }
+    ol, ul { margin: 4px 0; padding-left: 18px; }
     input,
     button { margin: 0; }
 
     #about a,
-    #gameList a { line-height: 1.1; }
+    #gameList a,
+    #proxyLinks a { line-height: 1.1; }
 
     .news-stream { margin-top: 6px; }
     .news-item { border: 1px solid #ccc; padding: 6px 8px; margin-top: 6px; }
@@ -42,6 +43,9 @@
 
     .faq-item { margin: 10px 0; }
     .faq-item div { font-size: 13px; }
+
+    .proxy-link-item { margin: 6px 0; }
+    .proxy-link-note { font-size: 12px; opacity: 0.8; }
 
     .status-online { color: #2ecc71; }
     .status-offline { color: #e74c3c; }
@@ -58,7 +62,7 @@
   <label><input type="checkbox" id="themeToggle"> dark mode</label>
 
   <div class="tabs">
-    <button type="button" data-tab="about">home</button><button type="button" data-tab="arcade">arcade</button><button type="button" data-tab="flash">flash</button><button type="button" data-tab="html5">html5</button><button type="button" data-tab="chat">chat</button><button type="button" data-tab="requests">requests &amp; faq</button>
+    <button type="button" data-tab="about">home</button><button type="button" data-tab="proxy">proxy</button><button type="button" data-tab="arcade">arcade</button><button type="button" data-tab="flash">flash</button><button type="button" data-tab="html5">html5</button><button type="button" data-tab="chat">chat</button><button type="button" data-tab="requests">requests &amp; faq</button>
   </div>
 
   <div id="about" class="tab active">
@@ -76,6 +80,34 @@
     <div class="home-block">
       <h2>news</h2>
       <div id="newsList" class="news-stream">(loading)</div>
+    </div>
+  </div>
+
+  <div id="proxy" class="tab">
+    <div class="home-block">
+      <h2>proxy</h2>
+      <div id="proxyLinks">(loading)</div>
+    </div>
+
+    <div class="home-block">
+      <h2>proxy tips and limitations</h2>
+      <p>this page is for notable limitations and uses of the proxy. unless otherwise mentioned, any links listed here should be opened inside the proxy, not directly.</p>
+
+      <h3>useful sites that are unblocked</h3>
+      <ul>
+        <li><b>internet archive (archive.org)</b> -- useful for books, archived webpages, movies, and more.</li>
+        <li><b>social media</b> -- instagram and tiktok seem to work through scramjet.</li>
+        <li><b>duckduckgo</b> -- type duckduckgo.com into the search bar after launching scramjet. it works better than google, which often throws captchas.</li>
+      </ul>
+
+      <h3>dealing with roadblocks / tips</h3>
+      <ul>
+        <li><b>tip #1: layer it.</b> if a site is still blocked, try opening a virtual browser inside the proxy. it can be laggy, but it sometimes works for sites like reddit.</li>
+        <li><b>tip #2: remember your info.</b> if a site needs login, make sure you know your username and password.</li>
+        <li><b>tip #3: don't be an idiot.</b> don't loudly advertise this in class. use it as a tool, not for dumb stuff.</li>
+      </ul>
+
+      <p>if the proxy doesn't work at all, sorry. if it does, have fun.</p>
     </div>
   </div>
 
@@ -161,6 +193,7 @@
       var faqList = document.getElementById('faqList');
       var newsList = document.getElementById('newsList');
       var quickLinks = document.getElementById('quickLinks');
+      var proxyLinks = document.getElementById('proxyLinks');
       var gameList = document.getElementById('gameList');
       var chatInput1 = document.getElementById('u1');
       var chatInput2 = document.getElementById('u2');
@@ -360,6 +393,53 @@
           })
           .catch(function () {
             quickLinks.textContent = '(nothing yet)';
+          });
+      }
+
+      function loadProxyLinks() {
+        if (!proxyLinks) {
+          return;
+        }
+
+        proxyLinks.textContent = '(loading)';
+
+        fetch('/proxies.json')
+          .then(function (response) {
+            if (!response.ok) {
+              throw new Error('proxies.json not found');
+            }
+            return response.json();
+          })
+          .then(function (items) {
+            proxyLinks.innerHTML = '';
+
+            if (!Array.isArray(items) || !items.length) {
+              proxyLinks.textContent = '(nothing yet)';
+              return;
+            }
+
+            for (var i = 0; i < items.length; i += 1) {
+              var item = items[i] || {};
+              var wrap = document.createElement('div');
+              var link = document.createElement('a');
+
+              wrap.className = 'proxy-link-item';
+              link.href = item.href || '#';
+              link.textContent = item.label || '(untitled)';
+              wrap.appendChild(link);
+
+              if (item.note) {
+                var note = document.createElement('div');
+                note.className = 'proxy-link-note';
+                note.textContent = item.note;
+                wrap.appendChild(note);
+              }
+
+              proxyLinks.appendChild(wrap);
+            }
+          })
+          .catch(function () {
+            proxyLinks.textContent = '(nothing yet)';
           });
       }
 
@@ -696,6 +776,7 @@
       loadStatus();
       loadNews();
       loadQuickLinks();
+      loadProxyLinks();
       loadGames();
       switchTab('about');
       switchChatTab('chat1');
@@ -707,6 +788,7 @@
       console.assert(document.getElementById('faqList') !== null, 'FAQ should be present');
       console.assert(document.getElementById('newsList') !== null, 'News should be present');
       console.assert(document.getElementById('quickLinks') !== null, 'Quick links should be present');
+      console.assert(document.getElementById('proxyLinks') !== null, 'Proxy links should be present');
       console.assert(document.getElementById('gameList') !== null, 'Games should be present');
     })();
   </script>
