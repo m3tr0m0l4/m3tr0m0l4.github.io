@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
+  <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Gmail_icon_%282020%29.svg/512px-Gmail_icon_%282020%29.svg.png">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Unblocked Library</title>
@@ -36,6 +37,9 @@
 
     .news-stream { margin-top: 6px; }
     .news-item { border: 1px solid #ccc; padding: 6px 8px; margin-top: 6px; }
+
+    .faq-item { margin: 6px 0; }
+    .faq-item div { font-size: 13px; }
     .news-date { font-size: 12px; opacity: 0.8; }
     body.dark .news-item { border-color: #2a3441; background: #111823; }
   </style>
@@ -494,12 +498,15 @@
               return;
             }
             for (var i = 0; i < items.length; i += 1) {
+              var wrap = document.createElement('div');
+              wrap.className = 'faq-item';
               var q = document.createElement('div');
               var a = document.createElement('div');
               q.innerHTML = '<b>Q:</b> ' + (items[i].q || '');
               a.innerHTML = '<b>A:</b> ' + (items[i].a || '');
-              faqList.appendChild(q);
-              faqList.appendChild(a);
+              wrap.appendChild(q);
+              wrap.appendChild(a);
+              faqList.appendChild(wrap);
             }
           })
           .catch(function () {
