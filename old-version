@@ -1,0 +1,336 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Unblocked Library</title>
+  <link rel="icon" type="image/svg" href="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Gmail_icon_%282020%29.svg/960px-Gmail_icon_%282020%29.svg.png?20221017173631">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body.dark { background: #0b0f14; color: #e6edf3; }
+    body.dark a { color: #8ab4ff; }
+    body.dark input, body.dark button { background: #111823; color: #e6edf3; border: 1px solid #2a3441; }
+    body.dark hr { border-color: #2a3441; }
+    body.dark .msgs { border-color: #2a3441 !important; }
+
+    .chat-tab-buttons {
+      margin: 10px 0;
+    }
+
+    .chat-tab-buttons button {
+      margin-right: 8px;
+    }
+
+    .chat-tab {
+      display: none;
+    }
+
+    .chat-tab.active {
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+<h1>unblocked library</h1>
+<p>Linewize is annoying. Here is a website for unblocked resources.</p>
+
+<b><br>!!! achtung !!! the proxy is currently down..please wait while I work on a fix<br></b>
+<button onclick="window.open('https://scramjet-app--m3tr0m0l4dev12.replit.app', '_blank')" style="width: 250px; white-space: nowrap;">Scramjet Proxy</button>
+<button onclick="window.open('/proxy-tips/', '_blank')" style="width: 250px; white-space: nowrap;">Tips and tricks for using Scramjet</button>
+
+<b><br>Arcade emulator<br></b>
+<button onclick="window.open('/arcade-loading-page/', '_blank')" style="width: 250px; white-space: nowrap;">Tutorial</button>
+
+<b><br>Play any flash game unblocked<br></b>
+<button onclick="window.open('/flash-loading-page/', '_blank')" style="width: 250px; white-space: nowrap;">Tutorial</button>
+
+<b><br>Other games<br></b>
+<button onclick="window.open('/slope/', '_blank')" style="width: 250px; white-space: nowrap;">Slope unblocked</button>
+<button onclick="window.open('/half-life/', '_blank')" style="width: 250px; white-space: nowrap;">Half Life (FPS)</button>
+<button onclick="window.open('/hexgl/', '_blank')" style="width: 250px; white-space: nowrap;">HexGL (Futuristic Racing!)</button>
+<button onclick="window.open('/eaglercraft/', '_blank')" style="width: 250px; white-space: nowrap;">Minecraft 1.5.2</button>
+<button onclick="window.open('/2048/', '_blank')" style="width: 250px; white-space: nowrap;">2048</button>
+<button onclick="window.open('/adarkroom/', '_blank')" style="width: 250px; white-space: nowrap;">A Dark Room</button>
+<button onclick="window.open('/run3/', '_blank')" style="width: 250px; white-space: nowrap;">Run 3</button>
+<button onclick="window.open('/shapez.io-master/', '_blank')" style="width: 250px; white-space: nowrap;">Shapez.io</button>
+<button onclick="window.open('/retrobowl/', '_blank')" style="width: 250px; white-space: nowrap;">Retro Bowl</button>
+<button onclick="window.open('/vex3/', '_blank')" style="width: 250px; white-space: nowrap;">Vex 3</button>
+
+<b><br>REQUEST FORM (if you have suggestions for the website, or unblocked things you have found that should be on here (thank you), put them here)<br></b>
+<a href="https://forms.gle/LjYg4BHPPaZuewUg6">Link (Google Forms)</a>
+
+<hr>
+
+<b>Chat</b><br>
+
+<div class="chat-tab-buttons">
+  <button onclick="switchTab('chat1')">Chat 1</button>
+  <button onclick="switchTab('chat2')">Chat 2</button>
+</div>
+
+<div id="chat1" class="chat-tab active">
+  <h3>Chat 1</h3>
+  <div id="login1">
+    Name: <input id="u1" maxlength="20">
+    <button onclick="connectChat(chat1State)">Connect</button>
+    <span id="err1" style="color:red"></span>
+  </div>
+
+  <div id="chatBox1" style="display:none">
+    <div style="margin:6px 0; font-family:monospace; font-size:12px;">
+      Users online: <span id="users1">(loading)</span>
+    </div>
+    <div id="msgs1" class="msgs" style="height:200px; overflow-y:auto; border:1px solid #ccc; padding:4px; font-family:monospace; font-size:13px; margin-top:6px"></div>
+    <div id="typers1" style="font-size:11px; color:gray; height:16px"></div>
+    <input id="m1" style="width:400px" placeholder="message…" disabled>
+    <button onclick="sendMessage(chat1State)" id="sb1" disabled>Send</button>
+    <button id="reconnectBtn1" onclick="reloadChat(chat1State)" style="display:none; margin-left:8px">Reconnect</button>
+  </div>
+</div>
+
+<div id="chat2" class="chat-tab">
+  <h3>Chat 2</h3>
+  <div id="login2">
+    Name: <input id="u2" maxlength="20">
+    <button onclick="connectChat(chat2State)">Connect</button>
+    <span id="err2" style="color:red"></span>
+  </div>
+
+  <div id="chatBox2" style="display:none">
+    <div style="margin:6px 0; font-family:monospace; font-size:12px;">
+      Users online: <span id="users2">(loading)</span>
+    </div>
+    <div id="msgs2" class="msgs" style="height:200px; overflow-y:auto; border:1px solid #ccc; padding:4px; font-family:monospace; font-size:13px; margin-top:6px"></div>
+    <div id="typers2" style="font-size:11px; color:gray; height:16px"></div>
+    <input id="m2" style="width:400px" placeholder="message…" disabled>
+    <button onclick="sendMessage(chat2State)" id="sb2" disabled>Send</button>
+    <button id="reconnectBtn2" onclick="reloadChat(chat2State)" style="display:none; margin-left:8px">Reconnect</button>
+  </div>
+</div>
+
+<hr>
+<div style="margin-top:10px;">
+  <label><input type="checkbox" id="darkToggle"> dark mode</label>
+</div>
+
+<script>
+  const SERVER_1 = 'wss://chat-server-production-14ad.up.railway.app';
+  const SERVER_2 = 'wss://web-production-e91a8.up.railway.app';
+
+  const chat1State = makeChatState(1, SERVER_1);
+  const chat2State = makeChatState(2, SERVER_2);
+
+  function makeChatState(id, server) {
+    return {
+      id,
+      server,
+      ws: null,
+      me: null,
+      ping: null,
+      isConnecting: false,
+      typingUsers: new Set(),
+      clearTimers: {}
+    };
+  }
+
+  function switchTab(tabId) {
+    document.querySelectorAll('.chat-tab').forEach(tab => tab.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+  }
+
+  const darkToggle = document.getElementById('darkToggle');
+  function applyDark(on) {
+    document.body.classList.toggle('dark', !!on);
+    localStorage.setItem('darkMode', on ? '1' : '0');
+    darkToggle.checked = !!on;
+  }
+  applyDark(localStorage.getItem('darkMode') === '1');
+  darkToggle.addEventListener('change', () => applyDark(darkToggle.checked));
+
+  function connectChat(state) {
+    const u = document.getElementById('u' + state.id).value.trim();
+    const err = document.getElementById('err' + state.id);
+
+    if (!u) {
+      err.textContent = 'need a name';
+      return;
+    }
+    if (state.isConnecting) return;
+
+    state.isConnecting = true;
+    err.textContent = 'connecting...';
+
+    state.ws = new WebSocket(state.server);
+
+    state.ws.onopen = () => {
+      state.ws.send(JSON.stringify({ type: 'join', username: u }));
+      state.ping = setInterval(() => {
+        if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+          state.ws.send(JSON.stringify({ type: 'ping' }));
+        }
+      }, 25000);
+    };
+
+    state.ws.onmessage = e => {
+      let d;
+      try { d = JSON.parse(e.data); } catch { return; }
+      handleMessage(state, d);
+    };
+
+    state.ws.onerror = () => {
+      err.textContent = 'connection failed';
+      state.isConnecting = false;
+    };
+
+    state.ws.onclose = () => {
+      state.isConnecting = false;
+      clearInterval(state.ping);
+      state.ping = null;
+      state.ws = null;
+
+      document.getElementById('m' + state.id).disabled = true;
+      document.getElementById('sb' + state.id).disabled = true;
+      document.getElementById('reconnectBtn' + state.id).style.display = '';
+      addSystemLine(state, '--- disconnected ---');
+    };
+  }
+
+  function reloadChat(state) {
+    state.me = null;
+    document.getElementById('chatBox' + state.id).style.display = 'none';
+    document.getElementById('login' + state.id).style.display = '';
+    document.getElementById('reconnectBtn' + state.id).style.display = 'none';
+    document.getElementById('msgs' + state.id).innerHTML = '';
+    document.getElementById('err' + state.id).textContent = '';
+  }
+
+  function handleMessage(state, d) {
+    const err = document.getElementById('err' + state.id);
+
+    if (d.type === 'error') {
+      err.textContent = d.reason || 'error';
+      state.isConnecting = false;
+      return;
+    }
+
+    if (d.type === 'welcome') {
+      state.me = d.username;
+      state.isConnecting = false;
+      err.textContent = '';
+
+      document.getElementById('login' + state.id).style.display = 'none';
+      document.getElementById('chatBox' + state.id).style.display = '';
+      document.getElementById('m' + state.id).disabled = false;
+      document.getElementById('sb' + state.id).disabled = false;
+      document.getElementById('m' + state.id).focus();
+
+      (d.history || []).forEach(msg => renderMsg(state, msg));
+      renderUsers(state, d.users || []);
+      addSystemLine(state, '--- connected as ' + state.me + ' ---');
+
+    } else if (d.type === 'message') {
+      renderMsg(state, d);
+    } else if (d.type === 'system') {
+      addSystemLine(state, '--- ' + d.text + ' ---');
+    } else if (d.type === 'typing') {
+      showTyping(state, d.username);
+    } else if (d.type === 'userlist') {
+      renderUsers(state, d.users || []);
+    }
+  }
+
+  function renderUsers(state, users) {
+    const el = document.getElementById('users' + state.id);
+    if (!users.length) {
+      el.textContent = '(none)';
+      return;
+    }
+    el.textContent = users.map(u => u.username).join(', ');
+  }
+
+  function renderMsg(state, m) {
+    const t = new Date(m.timestamp).toLocaleString('en-US', {
+      hour12: false,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+
+    const line = document.createElement('div');
+    line.textContent = `[${t}] ${m.username}: ${m.text}`;
+    addNode(state, line);
+  }
+
+  function addSystemLine(state, text) {
+    const line = document.createElement('div');
+    line.textContent = text;
+    addNode(state, line);
+  }
+
+  function addNode(state, node) {
+    const msgs = document.getElementById('msgs' + state.id);
+    msgs.appendChild(node);
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+
+  function sendMessage(state) {
+    const inp = document.getElementById('m' + state.id);
+    const text = inp.value.trim();
+    if (!text || !state.ws || state.ws.readyState !== WebSocket.OPEN) return;
+
+    state.ws.send(JSON.stringify({ type: 'message', text }));
+    inp.value = '';
+  }
+
+  function showTyping(state, username) {
+    if (!username) return;
+
+    state.typingUsers.add(username);
+    updateTyping(state);
+
+    clearTimeout(state.clearTimers[username]);
+    state.clearTimers[username] = setTimeout(() => {
+      state.typingUsers.delete(username);
+      updateTyping(state);
+    }, 2500);
+  }
+
+  function updateTyping(state) {
+    const names = [...state.typingUsers];
+    document.getElementById('typers' + state.id).textContent =
+      names.length ? names.join(', ') + ' typing...' : '';
+  }
+
+  document.getElementById('u1').addEventListener('keydown', e => {
+    if (e.key === 'Enter') connectChat(chat1State);
+  });
+
+  document.getElementById('u2').addEventListener('keydown', e => {
+    if (e.key === 'Enter') connectChat(chat2State);
+  });
+
+  document.getElementById('m1').addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      sendMessage(chat1State);
+      return;
+    }
+    if (chat1State.ws?.readyState === WebSocket.OPEN) {
+      chat1State.ws.send(JSON.stringify({ type: 'typing' }));
+    }
+  });
+
+  document.getElementById('m2').addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      sendMessage(chat2State);
+      return;
+    }
+    if (chat2State.ws?.readyState === WebSocket.OPEN) {
+      chat2State.ws.send(JSON.stringify({ type: 'typing' }));
+    }
+  });
+</script>
+</body>
+</html>
