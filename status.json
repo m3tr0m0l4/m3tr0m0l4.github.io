@@ -1,7 +1,7 @@
 {
   "proxy": {
-    "online": false,
-    "message": "working on a fix"
+    "online": "unstable",
+    "message": "slow mirror works but i am not sure if it is unblocked. try at your own risk under quick links."
   },
   "chat": {
     "online": true
