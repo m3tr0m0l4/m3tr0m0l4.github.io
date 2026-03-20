@@ -1,0 +1,6 @@
+{
+  "chat": {
+    "server1": "wss://chat-server-production-14ad.up.railway.app",
+    "server2": "wss://web-production-e91a8.up.railway.app"
+  }
+}
