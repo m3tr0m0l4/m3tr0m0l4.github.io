@@ -45,7 +45,6 @@
       background: #111823;
     }
 
-    /* status */
     .status-online { color: #2ecc71; }
     .status-offline { color: #e74c3c; }
     .status-unstable { color: #f1c40f; }
@@ -54,7 +53,6 @@
     body.dark .status-offline { color: #ff6b6b; }
     body.dark .status-unstable { color: #ffd93d; }
 
-    /* vertical links fix */
     #quickLinks a,
     #proxyLinks a,
     #gameList a {
@@ -83,7 +81,6 @@
 
 <!-- HOME -->
 <div id="about" class="tab active">
-
 <h2>status</h2>
 <div><b>proxy:</b> <span id="proxyStatus">(loading)</span></div>
 <div><b>chat:</b> <span id="chatStatus">(loading)</span></div>
@@ -93,7 +90,6 @@
 
 <h2>news</h2>
 <div id="newsList">(loading)</div>
-
 </div>
 
 <!-- PROXY -->
@@ -110,20 +106,30 @@ and instead should be accessed within the proxy<br><br></p>
 
 <h3>useful sites that are unblocked!</h3>
 <ul>
-<li><b>internet archive (archive.org)</b> -- incredibly useful for finding books, webpage archives, movies; basically anything you can think of</li>
-<li><b>social media</b> -- instagram and tiktok are completely unblocked as far as I can tell</li>
-<li><b>duckduckgo</b> -- works better than google (no captchas)</li>
+<li><b>internet archive</b> -- books, movies, webpages</li>
+<li><b>social media</b> -- instagram & tiktok work</li>
+<li><b>duckduckgo</b> -- no captchas</li>
 </ul>
 
 <h3>tips</h3>
 <ul>
-<li><b>layer it</b> -- use virtual browsers if blocked</li>
-<li><b>remember your info</b></li>
-<li><b>don't be an idiot</b></li>
+<li><b>layer it</b> -- use virtual browsers</li>
+<li><b>remember login</b></li>
+<li><b>don't be dumb</b></li>
 </ul>
 
-<p>if the proxy doesn't work at all, sorry. if it does, have fun</p>
+</div>
 
+<!-- ARCADE -->
+<div id="arcade" class="tab">
+<p>Download a ROM and load it below.</p>
+<iframe src="/arcade/" style="width:100%;height:600px;border:1px solid"></iframe>
+</div>
+
+<!-- FLASH -->
+<div id="flash" class="tab">
+<p>Load a .swf file below.</p>
+<iframe src="/flashplayer/" style="width:100%;height:500px;border:1px solid"></iframe>
 </div>
 
 <!-- HTML5 -->
@@ -132,9 +138,21 @@ and instead should be accessed within the proxy<br><br></p>
 <div id="gameList">(loading)</div>
 </div>
 
+<!-- CHAT -->
+<div id="chat" class="tab">
+
+<h3>Chat 1</h3>
+<input id="u1" placeholder="name">
+<button onclick="connectChat(chat1State)">connect</button>
+<div id="msgs1" style="height:200px;overflow:auto;border:1px solid"></div>
+<input id="m1">
+<button onclick="sendMessage(chat1State)">send</button>
+
+</div>
+
 <!-- REQUESTS -->
 <div id="requests" class="tab">
-<a href="https://forms.gle/LjYg4BHPPaZuewUg6">request form (anonymous)</a>
+<a href="https://forms.gle/LjYg4BHPPaZuewUg6">request form</a>
 <h3>faq</h3>
 <div id="faqList"></div>
 </div>
@@ -142,7 +160,6 @@ and instead should be accessed within the proxy<br><br></p>
 <script>
 (function(){
 
-/* tabs */
 function switchTab(id){
   document.querySelectorAll('.tab').forEach(t=>{
     t.className = t.id===id ? 'tab active' : 'tab';
@@ -153,7 +170,6 @@ document.querySelectorAll('.tabs button').forEach(b=>{
   b.onclick = ()=>switchTab(b.dataset.tab);
 });
 
-/* theme */
 const toggle=document.getElementById('themeToggle');
 function applyTheme(on){
   document.body.classList.toggle('dark',on);
@@ -163,111 +179,6 @@ function applyTheme(on){
 applyTheme(localStorage.getItem('d')==='1');
 toggle.onchange=()=>applyTheme(toggle.checked);
 
-/* status */
-function applyStatus(id,obj){
-  const el=document.getElementById(id);
-  if(!el||!obj)return;
-
-  el.className='';
-
-  if(obj.online===true){
-    el.classList.add('status-online');
-    el.textContent='online';
-  }
-  else if(obj.online==='unstable'){
-    el.classList.add('status-unstable');
-    el.textContent=obj.message ? 'unstable, '+obj.message : 'unstable';
-  }
-  else{
-    el.classList.add('status-offline');
-    el.textContent=obj.message ? 'offline, '+obj.message : 'offline';
-  }
-}
-
-fetch('/content/status.json')
-.then(r=>r.json())
-.then(d=>{
-  applyStatus('proxyStatus',d.proxy);
-  applyStatus('chatStatus',d.chat);
-});
-
-/* news */
-fetch('/content/news.json')
-.then(r=>r.json())
-.then(items=>{
-  const el=document.getElementById('newsList');
-  el.innerHTML='';
-  items.forEach(n=>{
-    const d=document.createElement('div');
-    d.className='news-item';
-    d.innerHTML=`${n.date}<br><b>${n.title}</b><br>${n.text}`;
-    el.appendChild(d);
-  });
-});
-
-/* quick links */
-fetch('/content/quicklinks.json')
-.then(r=>r.json())
-.then(items=>{
-  const el=document.getElementById('quickLinks');
-  el.innerHTML='';
-  items.forEach(i=>{
-    const a=document.createElement('a');
-    a.href=i.href;
-    a.textContent=i.label;
-    el.appendChild(a);
-  });
-});
-
-/* proxy links */
-fetch('/content/proxies.json')
-.then(r=>r.json())
-.then(items=>{
-  const el=document.getElementById('proxyLinks');
-  el.innerHTML='';
-  items.forEach(i=>{
-    const a=document.createElement('a');
-    a.href=i.href;
-    a.textContent=i.label;
-    el.appendChild(a);
-  });
-});
-
-/* games */
-fetch('/content/games.json')
-.then(r=>r.json())
-.then(items=>{
-  const el=document.getElementById('gameList');
-  el.innerHTML='';
-  items.forEach(g=>{
-    const a=document.createElement('a');
-    a.href=g.href;
-    a.textContent=g.label;
-    el.appendChild(a);
-  });
-});
-
-/* search */
-document.getElementById('search').oninput=function(){
-  const q=this.value.toLowerCase();
-  document.querySelectorAll('#gameList a').forEach(a=>{
-    a.style.display=a.textContent.toLowerCase().includes(q)?'':'none';
-  });
-};
-
-/* faq */
-fetch('/content/faq.json')
-.then(r=>r.json())
-.then(items=>{
-  const el=document.getElementById('faqList');
-  el.innerHTML='';
-  items.forEach(i=>{
-    const d=document.createElement('div');
-    d.innerHTML=`<b>Q:</b> ${i.q}<br><b>A:</b> ${i.a}`;
-    el.appendChild(d);
-  });
-});
-
 /* last updated */
 fetch(window.location.href,{method:'HEAD'})
 .then(res=>{
@@ -275,10 +186,8 @@ fetch(window.location.href,{method:'HEAD'})
   if(!lm)return;
   const d=new Date(lm);
   document.getElementById('lastUpdated').textContent =
-    'last updated: ' +
-    String(d.getMonth()+1).padStart(2,'0') + '/' +
-    String(d.getDate()).padStart(2,'0') + '/' +
-    d.getFullYear();
+    'last updated: '+
+    (d.getMonth()+1)+'/'+d.getDate()+'/'+d.getFullYear();
 });
 
 })();
