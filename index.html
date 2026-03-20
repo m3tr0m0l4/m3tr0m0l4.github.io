@@ -23,8 +23,8 @@
     .status-line { margin: 2px 0; }
     .quick-links { margin-top: 6px; }
     .quick-links a { display: block; margin: 1px 0; }
-    .section-label { display: block; margin-top: 8px; margin-bottom: 3px; } h2 { margin: 6px 0 3px; font-size: 20px; }
 
+    h2 { margin: 6px 0 4px; font-size: 24px; }
     p { margin: 0; }
     h3 { margin: 0; font-size: 18px; }
 
@@ -37,14 +37,14 @@
 
     .news-stream { margin-top: 6px; }
     .news-item { border: 1px solid #ccc; padding: 6px 8px; margin-top: 6px; }
-
-    .faq-item { margin: 6px 0; }
-    .faq-item div { font-size: 13px; }
     .news-date { font-size: 12px; opacity: 0.8; }
     body.dark .news-item { border-color: #2a3441; background: #111823; }
 
-    .status-online { color: #2ecc71; }   /* green */
-    .status-offline { color: #e74c3c; }  /* red */
+    .faq-item { margin: 10px 0; }
+    .faq-item div { font-size: 13px; }
+
+    .status-online { color: #2ecc71; }
+    .status-offline { color: #e74c3c; }
     body.dark .status-online { color: #4cd964; }
     body.dark .status-offline { color: #ff6b6b; }
   </style>
@@ -61,8 +61,8 @@
   <div id="about" class="tab active">
     <div class="home-block">
       <h2>status</h2>
-     <div class="status-line"><b>proxy:</b> <span class="status-offline">offline, fix in progress</span></div>
-     <div class="status-line"><b>chat:</b> <span class="status-online">online</span></div>
+      <div class="status-line"><b>proxy:</b> <span id="proxyStatus" class="status-offline">checking...</span></div>
+      <div class="status-line"><b>chat:</b> <span id="chatStatus" class="status-offline">checking...</span></div>
     </div>
 
     <div class="home-block quick-links">
@@ -255,6 +255,106 @@
             links[i].style.display = links[i].textContent.toLowerCase().indexOf(query) > -1 ? '' : 'none';
           }
         };
+      }
+
+      function setStatus(elementId, isOnline, onlineText, offlineText) {
+        var el = document.getElementById(elementId);
+        if (!el) return;
+
+        el.classList.remove('status-online', 'status-offline');
+        el.classList.add(isOnline ? 'status-online' : 'status-offline');
+        el.textContent = isOnline ? onlineText : offlineText;
+      }
+
+      function checkChatStatus() {
+        return new Promise(function (resolve) {
+          var done = false;
+          var ws;
+
+          function finish(isOnline) {
+            if (done) return;
+            done = true;
+            try {
+              if (ws) ws.close();
+            } catch (error) {}
+            resolve(isOnline);
+          }
+
+          try {
+            ws = new WebSocket('wss://chat-server-production-14ad.up.railway.app');
+          } catch (error) {
+            finish(false);
+            return;
+          }
+
+          var timeout = setTimeout(function () {
+            finish(false);
+          }, 4000);
+
+          ws.onopen = function () {
+            clearTimeout(timeout);
+            finish(true);
+          };
+
+          ws.onerror = function () {
+            clearTimeout(timeout);
+            finish(false);
+          };
+
+          ws.onclose = function () {
+            if (!done) {
+              clearTimeout(timeout);
+              finish(false);
+            }
+          };
+        });
+      }
+
+      function checkProxyStatus() {
+        return new Promise(function (resolve) {
+          var finished = false;
+          var timeout = setTimeout(function () {
+            if (!finished) {
+              finished = true;
+              resolve(false);
+            }
+          }, 5000);
+
+          fetch('https://scramjet-app--m3tr0m0l4dev12.replit.app', {
+            method: 'GET',
+            mode: 'no-cors',
+            cache: 'no-store'
+          })
+            .then(function () {
+              if (!finished) {
+                finished = true;
+                clearTimeout(timeout);
+                resolve(true);
+              }
+            })
+            .catch(function () {
+              if (!finished) {
+                finished = true;
+                clearTimeout(timeout);
+                resolve(false);
+              }
+            });
+        });
+      }
+
+      function refreshStatuses() {
+        checkChatStatus().then(function (isOnline) {
+          setStatus('chatStatus', isOnline, 'online', 'offline');
+        });
+
+        checkProxyStatus().then(function (isOnline) {
+          setStatus('proxyStatus', isOnline, 'online', 'offline, fix in progress');
+        });
+      }
+
+      function setupStatusChecks() {
+        refreshStatuses();
+        setInterval(refreshStatuses, 30000);
       }
 
       function makeChatState(id, server) {
@@ -522,6 +622,7 @@
       setupTheme();
       setupSearch();
       setupChat();
+      setupStatusChecks();
       switchTab('about');
       switchChatTab('chat1');
       loadFaq();
