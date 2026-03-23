@@ -5,8 +5,13 @@
     "note": "main proxy, currently DOWN"
   },
   {
-    "label": "Mirror 1",
+    "label": "Scramjet Mirror 1 (Koyeb)",
     "href": "https://graceful-peg-mola-org-e8eeadda.koyeb.app/",
-    "note": "unstable mirror, may be blocked"
+    "note": "unstable mirror; may be blocked"
+  },
+  {
+    "label": "Scramjet Mirror 2 (Railway)",
+    "href": "https://scramjet-app-production-0d4a.up.railway.app",
+    "note": "a more stable mirror, but has a monthly resource limit and may not always be online"
   }
 ]
