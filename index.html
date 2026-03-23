@@ -115,8 +115,7 @@
   <h2>status</h2>
   <div><b>proxy:</b> <span id="proxyStatus">(loading)</span></div>
   <div><b>chat:</b> <span id="chatStatus">(loading)</span></div>
-  <div><b>chat 1 users:</b> <span id="statusUsers1">(not connected)</span></div>
-  <div><b>chat 2 users:</b> <span id="statusUsers2">(not connected)</span></div>
+  <div><b>chat users online:</b> <span id="statusUsers">(checking...)</span></div>
 
   <h2>quick links</h2>
   <div id="quickLinks">(loading)</div>
@@ -253,6 +252,13 @@
   var chat2State = null;
   window.chat1State = null;
   window.chat2State = null;
+
+  var observedUsers = {
+    1: [],
+    2: []
+  };
+
+  var probePending = 0;
 
   /* tabs */
   function switchTab(id) {
@@ -482,20 +488,141 @@
     addNode(state, line);
   }
 
+  function setUsersDisplay(chatId, names) {
+    var el = document.getElementById('users' + chatId);
+    if (!el) return;
+    el.textContent = names.length ? names.join(', ') : '(none)';
+  }
+
+  function refreshCombinedUsers() {
+    var combined = [];
+
+    [1, 2].forEach(function (id) {
+      (observedUsers[id] || []).forEach(function (name) {
+        if (name && combined.indexOf(name) === -1) {
+          combined.push(name);
+        }
+      });
+    });
+
+    var statusEl = document.getElementById('statusUsers');
+    if (!statusEl) return;
+
+    if (probePending > 0 && combined.length === 0) {
+      statusEl.textContent = '(checking...)';
+      return;
+    }
+
+    statusEl.textContent = combined.length ? combined.join(', ') : '(none)';
+  }
+
+  function probeChatUsers(chatId, server) {
+    return new Promise(function (resolve) {
+      if (!server) {
+        observedUsers[chatId] = [];
+        setUsersDisplay(chatId, []);
+        refreshCombinedUsers();
+        resolve();
+        return;
+      }
+
+      probePending++;
+      refreshCombinedUsers();
+
+      var probeName = '__probe_' + chatId + '_' + Math.random().toString(36).slice(2, 8);
+      var ws = null;
+      var finished = false;
+
+      function finish(names) {
+        if (finished) return;
+        finished = true;
+
+        probePending = Math.max(0, probePending - 1);
+
+        var safeNames = Array.isArray(names) ? names.filter(Boolean) : [];
+        observedUsers[chatId] = safeNames;
+        setUsersDisplay(chatId, safeNames);
+        refreshCombinedUsers();
+
+        try {
+          if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) {
+            ws.close();
+          }
+        } catch (error) {}
+
+        resolve();
+      }
+
+      var timer = setTimeout(function () {
+        finish([]);
+      }, 2500);
+
+      try {
+        ws = new WebSocket(server);
+      } catch (error) {
+        clearTimeout(timer);
+        finish([]);
+        return;
+      }
+
+      ws.onopen = function () {
+        ws.send(JSON.stringify({
+          type: 'join',
+          username: probeName,
+          probe: true
+        }));
+      };
+
+      ws.onmessage = function (event) {
+        var data;
+        try {
+          data = JSON.parse(event.data);
+        } catch (error) {
+          return;
+        }
+
+        if ((data.type === 'welcome' || data.type === 'userlist') && Array.isArray(data.users)) {
+          clearTimeout(timer);
+          var names = data.users
+            .map(function (user) { return user.username; })
+            .filter(function (name) { return name && name !== probeName; });
+
+          finish(names);
+        } else if (data.type === 'error') {
+          clearTimeout(timer);
+          finish([]);
+        }
+      };
+
+      ws.onerror = function () {
+        clearTimeout(timer);
+        finish([]);
+      };
+
+      ws.onclose = function () {
+        clearTimeout(timer);
+        finish(observedUsers[chatId]);
+      };
+    });
+  }
+
+  function probeAllChats() {
+    return Promise.all([
+      probeChatUsers(1, chat1State && chat1State.server),
+      probeChatUsers(2, chat2State && chat2State.server)
+    ]).then(function () {
+      refreshCombinedUsers();
+    });
+  }
+
   function renderUsers(state, users) {
     var names = users.length
-      ? users.map(function (user) { return user.username; }).join(', ')
-      : '(none)';
+      ? users.map(function (user) { return user.username; })
+      : [];
 
-    var chatEl = document.getElementById('users' + state.id);
-    if (chatEl) {
-      chatEl.textContent = names;
-    }
-
-    var statusEl = document.getElementById('statusUsers' + state.id);
-    if (statusEl) {
-      statusEl.textContent = names;
-    }
+    setUsersDisplay(state.id, names);
+    observedUsers[state.id] = names.slice();
+    refreshCombinedUsers();
   }
 
   function renderMsg(state, message) {
@@ -619,10 +746,7 @@
       document.getElementById('reconnectBtn' + state.id).style.display = '';
       addSystemLine(state, '--- disconnected ---');
 
-      var statusEl = document.getElementById('statusUsers' + state.id);
-      if (statusEl) {
-        statusEl.textContent = '(disconnected)';
-      }
+      probeChatUsers(state.id, state.server);
     };
   }
   window.connectChat = connectChat;
@@ -636,10 +760,7 @@
     document.getElementById('msgs' + state.id).innerHTML = '';
     document.getElementById('err' + state.id).textContent = '';
 
-    var statusEl = document.getElementById('statusUsers' + state.id);
-    if (statusEl) {
-      statusEl.textContent = '(not connected)';
-    }
+    probeChatUsers(state.id, state.server);
   }
   window.reloadChat = reloadChat;
 
@@ -695,7 +816,10 @@
     };
   }
 
-  loadChatConfig();
+  loadChatConfig().then(function () {
+    probeAllChats();
+  });
+
   switchTab('about');
   switchChatTab('chat1');
 })();
