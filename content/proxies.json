@@ -7,11 +7,16 @@
   {
     "label": "Scramjet Mirror 1 (Koyeb)",
     "href": "https://graceful-peg-mola-org-e8eeadda.koyeb.app/",
-    "note": "BLOCKED on Chromebook Wi-Fi"
+    "note": "currently BLOCKED on Chromebook Wi-Fi"
   },
   {
     "label": "Scramjet Mirror 2 (Railway)",
     "href": "https://scramjet-app-production-0d4a.up.railway.app",
-    "note": "a more stable mirror, but has a monthly resource limit and may not always be online"
+    "note": "a stable mirror, but has a monthly resource limit and may not always be online"
+  },
+  {
+    "label": "Scramjet Mirror 3 (Railway)",
+    "href": "scramjet-app-production-0a67.up.railway.app",
+    "note": "a stable mirror, but has a monthly resource limit and may not always be online"
   }
 ]
