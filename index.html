@@ -59,6 +59,30 @@
     .proxy-link-item { margin: 6px 0; }
     .proxy-link-note { font-size: 12px; opacity: 0.8; }
 
+    .prototype-item {
+      padding: 8px 0;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .prototype-item:last-child {
+      border-bottom: none;
+    }
+
+    .prototype-title {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 2px;
+    }
+
+    .prototype-description {
+      font-size: 13px;
+      opacity: 0.9;
+    }
+
+    body.dark .prototype-item {
+      border-color: #2a3441;
+    }
+
     .status-online { color: #2ecc71; }
     .status-offline { color: #e74c3c; }
     .status-unstable { color: #f1c40f; }
@@ -103,6 +127,7 @@
 <div class="tabs">
   <button type="button" data-tab="about">home</button>
   <button type="button" data-tab="proxy">proxy</button>
+  <button type="button" data-tab="prototype">prototype</button>
   <button type="button" data-tab="arcade">arcade</button>
   <button type="button" data-tab="flash">flash</button>
   <button type="button" data-tab="html5">html5</button>
@@ -150,6 +175,12 @@
   </ul>
 
   <p><br><br>if the proxy doesn't work at all, sorry. i tried. if it does, yay! have fun</p>
+</div>
+
+<!-- PROTOTYPE -->
+<div id="prototype" class="tab">
+  <h2>prototype</h2>
+  <div id="prototypeList">(loading)</div>
 </div>
 
 <!-- ARCADE -->
@@ -242,6 +273,7 @@
   var newsList = document.getElementById('newsList');
   var quickLinks = document.getElementById('quickLinks');
   var proxyLinks = document.getElementById('proxyLinks');
+  var prototypeList = document.getElementById('prototypeList');
   var gameList = document.getElementById('gameList');
   var chatInput1 = document.getElementById('u1');
   var chatInput2 = document.getElementById('u2');
@@ -388,6 +420,33 @@
     })
     .catch(function () {
       proxyLinks.textContent = '(nothing yet)';
+    });
+
+  /* prototypes */
+  fetch('/content/prototype.json')
+    .then(function (r) { return r.json(); })
+    .then(function (items) {
+      prototypeList.innerHTML = '';
+      items.forEach(function (item) {
+        var wrap = document.createElement('div');
+        wrap.className = 'prototype-item';
+
+        var a = document.createElement('a');
+        a.href = item.href;
+        a.textContent = item.title;
+        a.className = 'prototype-title';
+        wrap.appendChild(a);
+
+        var desc = document.createElement('div');
+        desc.className = 'prototype-description';
+        desc.textContent = item.description || '';
+        wrap.appendChild(desc);
+
+        prototypeList.appendChild(wrap);
+      });
+    })
+    .catch(function () {
+      prototypeList.textContent = '(nothing yet)';
     });
 
   /* games */
