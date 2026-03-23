@@ -115,6 +115,8 @@
   <h2>status</h2>
   <div><b>proxy:</b> <span id="proxyStatus">(loading)</span></div>
   <div><b>chat:</b> <span id="chatStatus">(loading)</span></div>
+  <div><b>chat 1 users:</b> <span id="statusUsers1">(not connected)</span></div>
+  <div><b>chat 2 users:</b> <span id="statusUsers2">(not connected)</span></div>
 
   <h2>quick links</h2>
   <div id="quickLinks">(loading)</div>
@@ -481,14 +483,19 @@
   }
 
   function renderUsers(state, users) {
-    var el = document.getElementById('users' + state.id);
-    if (!users.length) {
-      el.textContent = '(none)';
-      return;
+    var names = users.length
+      ? users.map(function (user) { return user.username; }).join(', ')
+      : '(none)';
+
+    var chatEl = document.getElementById('users' + state.id);
+    if (chatEl) {
+      chatEl.textContent = names;
     }
-    el.textContent = users.map(function (user) {
-      return user.username;
-    }).join(', ');
+
+    var statusEl = document.getElementById('statusUsers' + state.id);
+    if (statusEl) {
+      statusEl.textContent = names;
+    }
   }
 
   function renderMsg(state, message) {
@@ -611,6 +618,11 @@
       document.getElementById('sb' + state.id).disabled = true;
       document.getElementById('reconnectBtn' + state.id).style.display = '';
       addSystemLine(state, '--- disconnected ---');
+
+      var statusEl = document.getElementById('statusUsers' + state.id);
+      if (statusEl) {
+        statusEl.textContent = '(disconnected)';
+      }
     };
   }
   window.connectChat = connectChat;
@@ -623,6 +635,11 @@
     document.getElementById('reconnectBtn' + state.id).style.display = 'none';
     document.getElementById('msgs' + state.id).innerHTML = '';
     document.getElementById('err' + state.id).textContent = '';
+
+    var statusEl = document.getElementById('statusUsers' + state.id);
+    if (statusEl) {
+      statusEl.textContent = '(not connected)';
+    }
   }
   window.reloadChat = reloadChat;
 
