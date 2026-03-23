@@ -1,7 +1,7 @@
 {
   "proxy": {
     "online": "unstable",
-    "message": "slow mirror works but i am not sure if it is unblocked. try at your own risk"
+    "message": "mirror 2 is pretty stable albeit with resource limits. try mirror 1 at your own risk; not sure if it is blocked. the main link does not work."
   },
   "chat": {
     "online": true
