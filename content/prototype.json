@@ -7,6 +7,11 @@
   {
     "title": "cloudvm",
     "href": "https://webvm.replit.app/",
-    "description": "Launch a 32-bit virtual machine directly in your browser using WebAssembly, Rust, C, SeaBIOS, and JavaScript."
+    "description": "Launch 32-bit virtual machines directly in your browser using WebAssembly, Rust, C, SeaBIOS, and JavaScript."
+  },
+  {
+    "title": "windows10web",
+    "href": "/Windows10/",
+    "description": "Windows 10 in the browser."
   }
 ]
