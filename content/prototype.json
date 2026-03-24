@@ -10,8 +10,8 @@
     "description": "Launch 32-bit virtual machines directly in your browser using WebAssembly, Rust, C, SeaBIOS, and JavaScript."
   },
   {
-    "title": "windows10web",
+    "title": "win10desktop",
     "href": "/Windows10/",
-    "description": "Windows 10 in the browser."
+    "description": "Windows 10 desktop in the browser. Cool proof-of-concept"
   }
 ]
