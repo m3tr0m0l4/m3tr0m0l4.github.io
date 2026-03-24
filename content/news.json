@@ -1,6 +1,11 @@
 [
   {
     "date": "03/23/2026",
+    "title": "new prototype tab",
+    "text": "Experimental and WIP projects."
+  },
+  {
+    "date": "03/23/2026",
     "title": "multiplayer support for minecraft",
     "text": "LAN worlds are now supported on Minecraft 1.5.2."
   },
