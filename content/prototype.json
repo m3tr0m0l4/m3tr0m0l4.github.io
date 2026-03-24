@@ -3,5 +3,10 @@
     "title": "webvm",
     "href": "/webvm/",
     "description": "A Linux virtual machine in the browser. This was suggested via the request form (along with .exe compatibility layer which I haven't forgotten about). If anyone would like to contribute, the repository can be found in my GitHub: m3tr0m0l4/webvm"
+  },
+  {
+    "title": "cloudvm",
+    "href": "https://webvm.replit.app/",
+    "description": "Launch a 32-bit virtual machine directly in your browser using WebAssembly, Rust, C, SeaBIOS, and JavaScript."
   }
 ]
