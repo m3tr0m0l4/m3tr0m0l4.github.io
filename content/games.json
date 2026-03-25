@@ -38,5 +38,9 @@
   {
     "label": "Vex 3",
     "href": "/vex3/"
-  }
+  },
+  {
+    "label": "Minecraft 1.8.8 (multiplayer only)",
+    "href": "/eaglercraft188/"
+  },
 ]
