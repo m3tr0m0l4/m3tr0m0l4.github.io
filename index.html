@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -141,6 +140,7 @@
   <h2>status</h2>
   <div><b>proxy:</b> <span id="proxyStatus">(loading)</span></div>
   <div><b>chat:</b> <span id="chatStatus">(loading)</span></div>
+  <div><b>eaglercraft players:</b> <span id="eaglerPlayers">(loading)</span></div>
   <div><b>chat users online:</b> <span id="statusUsers">(checking...)</span></div>
 
   <h2>quick links</h2>
@@ -347,6 +347,35 @@
       el.classList.add('status-offline');
       el.textContent = obj.message ? 'offline, ' + obj.message : 'offline';
     }
+  }
+
+  function updateEaglerPlayers() {
+    fetch('https://api.mcsrvstat.us/2/m3tr0m0l4.eagler.host')
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        var el = document.getElementById('eaglerPlayers');
+        if (!el) return;
+
+        el.className = '';
+
+        if (d && d.online && d.players && typeof d.players.online === 'number' && typeof d.players.max === 'number') {
+          el.classList.add('status-online');
+          el.textContent = d.players.online + ' / ' + d.players.max;
+        } else if (d && d.online && d.players && typeof d.players.online === 'number') {
+          el.classList.add('status-online');
+          el.textContent = String(d.players.online);
+        } else {
+          el.classList.add('status-offline');
+          el.textContent = '(offline)';
+        }
+      })
+      .catch(function () {
+        var el = document.getElementById('eaglerPlayers');
+        if (!el) return;
+        el.className = '';
+        el.classList.add('status-unstable');
+        el.textContent = '(error)';
+      });
   }
 
   fetch('/content/status.json')
@@ -860,6 +889,9 @@
   }).then(function () {
     refreshCombinedUsers();
   });
+
+  updateEaglerPlayers();
+  setInterval(updateEaglerPlayers, 30000);
 
   switchTab('about');
   switchChatTab('chat1');
