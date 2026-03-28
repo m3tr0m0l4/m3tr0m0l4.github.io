@@ -34,6 +34,42 @@
     body.dark .msgs { border-color: #2a3441 !important; }
     body.dark .news-item { border-color: #2a3441; background: #111823; }
 
+    body:not(.dark) {
+      background: #ffffff;
+      color: #111827;
+    }
+
+    body:not(.dark) a {
+      color: #1d4ed8;
+    }
+
+    body:not(.dark) input,
+    body:not(.dark) button {
+      background: #ffffff;
+      color: #111827;
+      border: 1px solid #c7d0dd;
+      box-shadow: none;
+      border-radius: 0;
+    }
+
+    body:not(.dark) .msgs {
+      border-color: #c7d0dd !important;
+      background: #ffffff;
+    }
+
+    body:not(.dark) .news-item {
+      border-color: #c7d0dd;
+      background: #ffffff;
+    }
+
+    body:not(.dark) .prototype-item {
+      border-color: #c7d0dd;
+    }
+
+    body:not(.dark) .status-online { color: #15803d; }
+    body:not(.dark) .status-offline { color: #b91c1c; }
+    body:not(.dark) .status-unstable { color: #a16207; }
+
     .tab { display: none; }
     .chat-subtab { display: none; }
 
