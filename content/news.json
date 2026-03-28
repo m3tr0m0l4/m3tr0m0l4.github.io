@@ -1,5 +1,10 @@
 [
   {
+    "date": "03/27/2026",
+    "title": "new mirror link for minecraft server",
+    "text": "People have had trouble with connecting to the MC server, especially on the public Wi-Fi. This mirror aims to fix that. If it does not load at first, wait 60 seconds and refresh server list."
+  },
+  {
     "date": "03/25/2026",
     "title": "updated minecraft version + multiplayer server",
     "text": "Added Minecraft 1.8.8, and created a survival server."
