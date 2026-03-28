@@ -2,7 +2,7 @@
   {
     "title": "browser.js",
     "href": "/browser.js/",
-    "description": "a 'browser-in-a-browser' with Scramjet backend."
+    "description": "A work-in-progress 'browser-in-a-browser' with Scramjet backend."
   },
   {
     "title": "webvm",
