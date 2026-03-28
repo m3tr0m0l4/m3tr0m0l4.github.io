@@ -1,5 +1,10 @@
 [
   {
+    "title": "browser.js",
+    "href": "/browser.js/",
+    "description": "a 'browser-in-a-browser" with Scramjet backend."
+  },
+  {
     "title": "webvm",
     "href": "/webvm/",
     "description": "A Linux virtual machine in the browser. This was suggested via the request form (along with .exe compatibility layer which I haven't forgotten about). If anyone would like to contribute, the repository can be found in my GitHub: m3tr0m0l4/webvm"
