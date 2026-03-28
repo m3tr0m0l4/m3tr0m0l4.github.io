@@ -1,7 +1,6 @@
 {
   "proxy": {
-    "online": "unstable",
-    "message": "mirrors 2 & 3 work but have resource limits. mirror 1 is unfortunately blocked. the main link does not work."
+    "online": true,
   },
   "chat": {
     "online": true
