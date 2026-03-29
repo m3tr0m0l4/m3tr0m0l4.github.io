@@ -18,5 +18,10 @@
     "label": "Scramjet Mirror 3 (Railway)",
     "href": "https://scramjet-app-production-0a67.up.railway.app",
     "note": "a stable mirror, but has a monthly resource limit and may not always be online"
+  },
+  {
+    "label": "Scramjet Mirror 4 (Vercel)",
+    "href": "https://scramjet-app-orpin.vercel.app/",
+    "note": "a stable mirror, with limits"
   }
 ]
