@@ -1,5 +1,10 @@
 [
   {
+    "date": "05/16/2026",
+    "title": "website back online",
+    "text": "After a brief downtime period to avoid complication, the website is back up and should be for the forseeable future. Minecraft servers must be self-hosted now, if enough people are wanting to play though I can create one."
+  },
+  {
     "date": "03/27/2026",
     "title": "new mirror link for minecraft server",
     "text": "People have had trouble with connecting to the MC server, especially on the public Wi-Fi. This mirror aims to fix that. If it does not load at first, wait 60 seconds and refresh server list."
