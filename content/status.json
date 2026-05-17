@@ -1,6 +1,6 @@
 {
   "proxy": {
-    "online": true
+    "online": "unstable"
   },
   "chat": {
     "online": true
