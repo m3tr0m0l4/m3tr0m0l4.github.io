@@ -1,5 +1,10 @@
 [
   {
+    "date": "11/19/2026",
+    "title": "the proxy update, part 1",
+    "text": "Auto-mirror-redirecting added to the homepage for proxy, new individual statuses under proxy tab. Also added more mirrors and removed broken ones."
+  },
+  {
     "date": "05/16/2026",
     "title": "website back online",
     "text": "After a brief downtime period to avoid complication, the website is back up and should be for the forseeable future. Minecraft servers must be self-hosted now, if enough people are wanting to play though I can create one."
