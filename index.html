@@ -152,6 +152,8 @@
       line-height: 1.1;
     }
 
+    .proxy-link-item > a { display: inline; }
+
     .chat-tab-buttons {
       margin: 6px 0;
     }
@@ -449,16 +451,31 @@
   var availableProxies = fetch('/content/proxies.json')
     .then(function (r) { if (!r.ok) throw new Error('proxies unavailable'); return r.json(); });
 
+  function proxyResponds(url) {
+    var controller = new AbortController();
+    var timer = setTimeout(function () { controller.abort(); }, 4000);
+    return fetch(url, { mode: 'no-cors', cache: 'no-store', signal: controller.signal })
+      .then(function () { return true; })
+      .catch(function () { return false; })
+      .finally(function () { clearTimeout(timer); });
+  }
+
   Promise.all([
     fetch('/content/quicklinks.json').then(function (r) { return r.json(); }),
     availableProxies
   ])
-    .then(function (results) {
+    .then(async function (results) {
       var items = results[0];
-      var proxies = results[1];
-      var selected = proxies.find(function (p) {
+      var candidates = results[1].filter(function (p) {
         return p.online === true && !/koyeb/i.test(p.label);
       });
+      var selected = null;
+      for (var j = 0; j < candidates.length; j++) {
+        if (await proxyResponds(candidates[j].href)) {
+          selected = candidates[j];
+          break;
+        }
+      }
       quickLinks.innerHTML = '';
       items.forEach(function (i) {
         var a = document.createElement('a');
