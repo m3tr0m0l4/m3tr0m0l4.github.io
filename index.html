@@ -446,28 +446,37 @@
       newsList.textContent = '(nothing yet)';
     });
 
-  fetch('/content/quicklinks.json')
-    .then(function (r) { if (!r.ok) throw new Error('quicklinks'); return r.json(); })
-    .then(function (items) {
-      return fetch('https://raw.githubusercontent.com/m3tr0m0l4/m3tr0m0l4.github.io/main/content/proxy-health.json', { cache: 'no-store' })
-        .then(function (r) { if (!r.ok) throw new Error('proxy health'); return r.json(); })
-        .then(function (health) {
-          var fresh = Date.now() - Date.parse(health.checked_at) < 2 * 60 * 60 * 1000;
-          return items.map(function (item) {
-            if (item.label !== 'Scramjet Proxy') return item;
-            return Object.assign({}, item, { href: fresh && health.selected ? health.selected : '#proxy' });
-          });
-        })
-        .catch(function () { return items; });
-    })
-    .then(function (items) {
+  var availableProxies = fetch('/content/proxies.json')
+    .then(function (r) { if (!r.ok) throw new Error('proxies unavailable'); return r.json(); });
+
+  Promise.all([
+    fetch('/content/quicklinks.json').then(function (r) { return r.json(); }),
+    availableProxies
+  ])
+    .then(function (results) {
+      var items = results[0];
+      var proxies = results[1];
+      var selected = proxies.find(function (p) {
+        return p.online === true && !/koyeb/i.test(p.label);
+      });
       quickLinks.innerHTML = '';
       items.forEach(function (i) {
         var a = document.createElement('a');
-        a.href = i.href;
+        a.href = i.label === 'Scramjet Proxy'
+          ? (selected ? selected.href : '#proxy')
+          : i.href;
         a.textContent = i.label;
-        if (i.label === 'Scramjet Proxy' && i.href === '#proxy') {
-          a.onclick = function (event) { event.preventDefault(); switchTab('proxy'); };
+        if (i.label === 'Scramjet Proxy') {
+          var status = document.createElement('span');
+          status.className = selected ? 'status-online' : 'status-offline';
+          status.textContent = selected ? ' (online)' : ' (offline)';
+          a.appendChild(status);
+          if (!selected) {
+            a.onclick = function (event) {
+              event.preventDefault();
+              switchTab('proxy');
+            };
+          }
         }
         quickLinks.appendChild(a);
       });
@@ -476,8 +485,7 @@
       quickLinks.textContent = '(nothing yet)';
     });
 
-  fetch('/content/proxies.json')
-    .then(function (r) { return r.json(); })
+  availableProxies
     .then(function (items) {
       proxyLinks.innerHTML = '';
       items.forEach(function (i) {
@@ -488,6 +496,11 @@
         a.href = i.href;
         a.textContent = i.label;
         wrap.appendChild(a);
+
+        var status = document.createElement('span');
+        status.className = i.online === true ? 'status-online' : 'status-offline';
+        status.textContent = i.online === true ? ' (online)' : ' (offline)';
+        wrap.appendChild(status);
 
         if (i.note) {
           var note = document.createElement('div');

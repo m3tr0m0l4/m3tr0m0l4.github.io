@@ -2,26 +2,31 @@
   {
     "label": "Scramjet proxy",
     "href": "https://scramjet-app-1dvz.onrender.com",
-    "note": "main proxy, hosted with Render, currently down"
+    "note": "main proxy, hosted with Render, currently down",
+    "online": false
   },
   {
     "label": "Scramjet Mirror 1 (Koyeb)",
     "href": "https://graceful-peg-mola-org-e8eeadda.koyeb.app/",
-    "note": "blocked on school wi-fi. for home use."
+    "note": "blocked on school wi-fi. for home use.",
+    "online": true
   },
   {
     "label": "Scramjet Mirror 2 (Vercel)",
     "href": "https://scramjet-app-mauve-five.vercel.app/",
-    "note": ""
+    "note": "",
+    "online": true
   },
   {
     "label": "Scramjet Mirror 3 (Vercel)",
     "href": "https://scramjet-app-orpin.vercel.app/",
-    "note": ""
+    "note": "",
+    "online": true
   },
   {
     "label": "Scramjet Mirror 4 (Render)",
     "href": "https://scramjet-app-il54.onrender.com/",
-    "note": ""
+    "note": "",
+    "online": true
   }
 ]
