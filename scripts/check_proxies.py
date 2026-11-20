@@ -58,7 +58,16 @@ def check(proxy):
         if status != 200 or "scramjet" not in worker.lower():
             raise ValueError("Service worker missing")
         scripts = ("/scram/scramjet.all.js", "/scram/scramjet.js")
-        if not any(get(urllib.parse.urljoin(url, path))[0] == 200 for path in scripts):
+        asset_found = False
+        for path in scripts:
+            try:
+                status, asset = get(urllib.parse.urljoin(url, path))
+                if status == 200 and len(asset) > 100:
+                    asset_found = True
+                    break
+            except Exception:
+                continue
+        if not asset_found:
             raise ValueError("Scramjet assets missing")
         if not wisp_works(url):
             raise ValueError("Wisp websocket unavailable")
