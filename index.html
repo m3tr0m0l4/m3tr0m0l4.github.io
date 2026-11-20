@@ -446,8 +446,48 @@
       newsList.textContent = '(nothing yet)';
     });
 
+  function proxyResponds(url) {
+    var controller = new AbortController();
+    var timer = setTimeout(function () { controller.abort(); }, 4000);
+
+    return fetch(url, {
+      mode: 'no-cors',
+      cache: 'no-store',
+      signal: controller.signal
+    }).then(function () {
+      clearTimeout(timer);
+      return true;
+    }).catch(function () {
+      clearTimeout(timer);
+      return false;
+    });
+  }
+
   fetch('/content/quicklinks.json')
     .then(function (r) { return r.json(); })
+    .then(function (items) {
+      return fetch('/content/proxies.json')
+        .then(function (r) { return r.json(); })
+        .then(async function (proxies) {
+          var candidates = proxies.filter(function (proxy) {
+            return !/koyeb/i.test(proxy.label || '');
+          });
+
+          for (var p = 0; p < candidates.length; p++) {
+            if (await proxyResponds(candidates[p].href)) {
+              items.forEach(function (item) {
+                if (item.label === 'Scramjet Proxy') {
+                  item.href = candidates[p].href;
+                }
+              });
+              break;
+            }
+          }
+
+          return items;
+        })
+        .catch(function () { return items; });
+    })
     .then(function (items) {
       quickLinks.innerHTML = '';
       items.forEach(function (i) {
