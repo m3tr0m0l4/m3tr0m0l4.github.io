@@ -486,8 +486,10 @@
         if (i.label === 'Scramjet Proxy') {
           var status = document.createElement('span');
           status.className = selected ? 'status-online' : 'status-offline';
-          status.textContent = selected ? ' (online)' : ' (offline)';
-          a.appendChild(status);
+          if (!selected) {
+            status.textContent = ' (offline)';
+            a.appendChild(status);
+          }
           if (!selected) {
             a.onclick = function (event) {
               event.preventDefault();
