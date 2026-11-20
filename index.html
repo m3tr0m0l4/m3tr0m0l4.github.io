@@ -152,7 +152,7 @@
       line-height: 1.1;
     }
 
-    .proxy-link-item > a { display: inline; }
+    #proxyLinks .proxy-link-item > a { display: inline; }
 
     .chat-tab-buttons {
       margin: 6px 0;
@@ -448,7 +448,7 @@
       newsList.textContent = '(nothing yet)';
     });
 
-  var availableProxies = fetch('/content/proxies.json')
+  var availableProxies = fetch('/content/proxies.json', { cache: 'no-store' })
     .then(function (r) { if (!r.ok) throw new Error('proxies unavailable'); return r.json(); });
 
   function proxyResponds(url) {
