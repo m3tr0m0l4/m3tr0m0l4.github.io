@@ -202,6 +202,10 @@
   <h2 class="small-header">proxies</h2>
   <div id="proxyLinks">(loading)</div>
 
+  <h2>proxy quick links</h2>
+  <div id="proxyQuickLinks">(loading)</div>
+  <p class="proxy-link-note">click to copy the URL and open a proxy, then paste it into the address bar.</p>
+
   <h2>proxy tips and limitations</h2>
 
   <p>this page is dedicated to logging some notable limitations and uses of the proxy.
@@ -531,6 +535,48 @@
     })
     .catch(function () {
       proxyLinks.textContent = '(nothing yet)';
+    });
+
+  Promise.all([
+    fetch('/content/proxyquicklinks.json').then(function (r) {
+      if (!r.ok) throw new Error('proxy quick links unavailable');
+      return r.json();
+    }),
+    availableProxies
+  ])
+    .then(function (results) {
+      var links = results[0];
+      var proxy = results[1].find(function (p) {
+        return p.online === true && !/koyeb/i.test(p.label);
+      });
+      var list = document.getElementById('proxyQuickLinks');
+      list.textContent = '';
+      links.forEach(function (item) {
+        var a = document.createElement('a');
+        a.href = item.href;
+        a.textContent = item.label;
+        a.style.display = 'block';
+        a.onclick = function (event) {
+          event.preventDefault();
+          var text = item.href;
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).catch(function () {
+              window.prompt('Copy this URL into the proxy:', text);
+            });
+          } else {
+            window.prompt('Copy this URL into the proxy:', text);
+          }
+          if (proxy) {
+            window.open(proxy.href, '_blank', 'noopener');
+          } else {
+            switchTab('proxy');
+          }
+        };
+        list.appendChild(a);
+      });
+    })
+    .catch(function () {
+      document.getElementById('proxyQuickLinks').textContent = '(nothing yet)';
     });
 
   fetch('/content/prototype.json')
