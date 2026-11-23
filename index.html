@@ -204,7 +204,7 @@
 
   <h2>proxy quick links</h2>
   <div id="proxyQuickLinks">(loading)</div>
-  <p class="proxy-link-note">click to copy the URL and open a proxy, then paste it into the address bar.</p>
+  <p class="proxy-link-note">open these sites directly through an available proxy.</p>
 
   <h2>proxy tips and limitations</h2>
 
@@ -544,34 +544,36 @@
     }),
     availableProxies
   ])
-    .then(function (results) {
+    .then(async function (results) {
       var links = results[0];
-      var proxy = results[1].find(function (p) {
+      var candidates = results[1].filter(function (p) {
         return p.online === true && !/koyeb/i.test(p.label);
       });
+      var proxy = null;
+      for (var j = 0; j < candidates.length; j++) {
+        if (await proxyResponds(candidates[j].href)) {
+          proxy = candidates[j];
+          break;
+        }
+      }
       var list = document.getElementById('proxyQuickLinks');
       list.textContent = '';
       links.forEach(function (item) {
         var a = document.createElement('a');
-        a.href = item.href;
+        a.href = proxy
+          ? proxy.href.replace(/\/$/, '') + '/?url=' + encodeURIComponent(item.href)
+          : '#proxy';
         a.textContent = item.label;
         a.style.display = 'block';
-        a.onclick = function (event) {
-          event.preventDefault();
-          var text = item.href;
-          if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(text).catch(function () {
-              window.prompt('Copy this URL into the proxy:', text);
-            });
-          } else {
-            window.prompt('Copy this URL into the proxy:', text);
-          }
-          if (proxy) {
-            window.open(proxy.href, '_blank', 'noopener');
-          } else {
+        if (proxy) {
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+        } else {
+          a.onclick = function (event) {
+            event.preventDefault();
             switchTab('proxy');
-          }
-        };
+          };
+        }
         list.appendChild(a);
       });
     })
