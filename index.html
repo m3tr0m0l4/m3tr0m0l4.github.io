@@ -112,6 +112,7 @@
     .proxy-link-item { margin: 6px 0; }
     .proxy-link-note { font-size: 12px; opacity: 0.8; }
     .proxy-quick-description { color: inherit; font-size: inherit; opacity: 1; }
+    #proxyQuickLinks .proxy-link-item { margin: 2px 0; line-height: 1.2; }
 
 
     .prototype-item {
@@ -207,20 +208,6 @@
   <h2>proxy quick links</h2>
   <div id="proxyQuickLinks">(loading)</div>
   <p class="proxy-link-note">open these sites directly through an available proxy.</p>
-
-  <h2>proxy tips and limitations</h2>
-
-  <p>this page is dedicated to logging some notable limitations and uses of the proxy.
-  note that any links given, unless otherwise mentioned, should not be directly clicked,
-  and instead should be accessed within the proxy<br><br></p>
-
-  <h3>useful sites that are unblocked!</h3>
-  <ul>
-    <li><b>internet archive (archive.org)</b> -- incredibly useful for finding books, webpage archives, movies; basically anything you can think of</li>
-    <li><b>social media</b> -- not "useful" per se, but still impressive. instagram and tiktok are completely unblocked as far as I can tell, even using just scramjet (more on that later)</li>
-    <li><b>duckduckgo (type duckduckgo.com into the searchbar after launching scramjet)</b> -- a fast, private, and secure search engine that works flawlessly on scramjet. google will hit you with annoying captchas ("click on all of the crosswalks") since it doesn't like you using a proxy. duckduckgo doesn't mind. use it</li>
-    <li><b>popcornmovies.st</b> -- currently my favorite option for free movies and TV. if there's a movie you want to watch it most likely has it.</li>
-  </ul>
 
   <h3>dealing with roadblocks / miscellaneous tips & tricks</h3>
   <ul>
@@ -582,7 +569,7 @@
         if (item.description) {
           var description = document.createElement('span');
           description.className = 'proxy-quick-description';
-          description.textContent = item.description;
+          description.textContent = ' — ' + item.description;
           wrap.appendChild(description);
         }
         list.appendChild(wrap);
