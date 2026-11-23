@@ -100,8 +100,13 @@
       text-align: left;
     }
 
-    #newsList { max-height: 220px; overflow-y: auto; border: 1px solid #ccc; padding: 4px; }
-    body.dark #newsList { border-color: #2a3441; }
+    #newsList { max-height: 360px; overflow-y: auto; border: 1px solid #ccc; padding: 4px; scrollbar-width: thin; scrollbar-color: #aeb8c7 #f1f3f6; }
+    body.dark #newsList { border-color: #2a3441; scrollbar-color: #42536a #111823; }
+    #newsList::-webkit-scrollbar { width: 10px; }
+    #newsList::-webkit-scrollbar-track { background: #f1f3f6; border-radius: 0; }
+    #newsList::-webkit-scrollbar-thumb { background: #aeb8c7; border-radius: 0; }
+    body.dark #newsList::-webkit-scrollbar-track { background: #111823; }
+    body.dark #newsList::-webkit-scrollbar-thumb { background: #42536a; }
 
     .news-item {
       border: 1px solid #ccc;
