@@ -1,11 +1,13 @@
 [
   {
     "label": "Instagram",
-    "href": "https://instagram.com/"
+    "href": "https://instagram.com/",
+    "category": "social media"
   },
   {
     "label": "Internet Archive",
     "href": "https://archive.org/",
-    "description": " -- use for books, movies, wayback machine, whatever."
+    "description": " -- use for books, movies, wayback machine, whatever.",
+    "category": "misc"
   }
 ]

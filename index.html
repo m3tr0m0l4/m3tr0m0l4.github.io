@@ -113,6 +113,7 @@
     .proxy-link-note { font-size: 12px; opacity: 0.8; }
     .proxy-quick-description { color: inherit; font-size: inherit; opacity: 1; }
     #proxyQuickLinks .proxy-link-item { margin: 2px 0; line-height: 1.2; }
+    #proxyQuickLinks .proxy-quick-category { margin: 6px 0 2px; font-size: 16px; }
 
 
     .prototype-item {
@@ -207,7 +208,6 @@
 
   <h2>proxy quick links</h2>
   <div id="proxyQuickLinks">(loading)</div>
-  <p class="proxy-link-note">open these sites directly through an available proxy.</p>
 
   <h3>dealing with roadblocks / miscellaneous tips & tricks</h3>
   <ul>
@@ -547,7 +547,17 @@
       }
       var list = document.getElementById('proxyQuickLinks');
       list.textContent = '';
+      var groups = {};
       links.forEach(function (item) {
+        var category = item.category || 'misc';
+        if (!groups[category]) {
+          var heading = document.createElement('h3');
+          heading.className = 'proxy-quick-category';
+          heading.textContent = category;
+          list.appendChild(heading);
+          groups[category] = document.createElement('div');
+          list.appendChild(groups[category]);
+        }
         var a = document.createElement('a');
         a.href = proxy
           ? proxy.href.replace(/\/$/, '') + '/?url=' + encodeURIComponent(item.href)
@@ -572,7 +582,7 @@
           description.textContent = ' — ' + item.description;
           wrap.appendChild(description);
         }
-        list.appendChild(wrap);
+        groups[category].appendChild(wrap);
       });
     })
     .catch(function () {
