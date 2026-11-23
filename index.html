@@ -563,7 +563,7 @@
         a.href = proxy
           ? proxy.href.replace(/\/$/, '') + '/?url=' + encodeURIComponent(item.href)
           : '#proxy';
-        a.textContent = item.href;
+        a.textContent = item.label || item.href;
         a.style.display = 'block';
         if (proxy) {
           a.target = '_blank';
