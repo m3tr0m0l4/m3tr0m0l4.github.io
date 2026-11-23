@@ -538,7 +538,7 @@
     });
 
   Promise.all([
-    fetch('/content/proxyquicklinks.json').then(function (r) {
+    fetch('/content/proxyquicklinks.json', { cache: 'no-store' }).then(function (r) {
       if (!r.ok) throw new Error('proxy quick links unavailable');
       return r.json();
     }),
