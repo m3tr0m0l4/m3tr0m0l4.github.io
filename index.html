@@ -563,7 +563,7 @@
         a.href = proxy
           ? proxy.href.replace(/\/$/, '') + '/?url=' + encodeURIComponent(item.href)
           : '#proxy';
-        a.textContent = item.label;
+        a.textContent = item.href;
         a.style.display = 'block';
         if (proxy) {
           a.target = '_blank';
@@ -574,7 +574,16 @@
             switchTab('proxy');
           };
         }
-        list.appendChild(a);
+        var wrap = document.createElement('div');
+        wrap.className = 'proxy-link-item';
+        wrap.appendChild(a);
+        if (item.description) {
+          var description = document.createElement('div');
+          description.className = 'proxy-link-note';
+          description.textContent = item.description;
+          wrap.appendChild(description);
+        }
+        list.appendChild(wrap);
       });
     })
     .catch(function () {

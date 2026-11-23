@@ -1,10 +1,10 @@
 [
   {
-    "label": "Instagram",
-    "href": "https://instagram.com/"
+    "href": "https://instagram.com/",
+    "description": "Instagram social media."
   },
   {
-    "label": "Internet Archive",
-    "href": "https://archive.org/"
+    "href": "https://archive.org/",
+    "description": "Internet Archive: books, websites, videos, and other digital collections."
   }
 ]
