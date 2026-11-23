@@ -2,11 +2,10 @@
   {
     "label": "Instagram",
     "href": "https://instagram.com/",
-    "description": "Instagram."
   },
   {
     "label": "Internet Archive",
     "href": "https://archive.org/",
-    "description": "Internet Archive: use for books, movies, wayback machine, whatever."
+    "description": "Use for books, movies, wayback machine, whatever."
   }
 ]
