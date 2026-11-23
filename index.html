@@ -111,6 +111,8 @@
 
     .proxy-link-item { margin: 6px 0; }
     .proxy-link-note { font-size: 12px; opacity: 0.8; }
+    .proxy-quick-description { color: inherit; font-size: inherit; opacity: 1; }
+
 
     .prototype-item {
       padding: 8px 0;
@@ -564,7 +566,7 @@
           ? proxy.href.replace(/\/$/, '') + '/?url=' + encodeURIComponent(item.href)
           : '#proxy';
         a.textContent = item.label || item.href;
-        a.style.display = 'block';
+        a.style.display = 'inline';
         if (proxy) {
           a.target = '_blank';
           a.rel = 'noopener noreferrer';
@@ -578,8 +580,8 @@
         wrap.className = 'proxy-link-item';
         wrap.appendChild(a);
         if (item.description) {
-          var description = document.createElement('div');
-          description.className = 'proxy-link-note';
+          var description = document.createElement('span');
+          description.className = 'proxy-quick-description';
           description.textContent = item.description;
           wrap.appendChild(description);
         }
