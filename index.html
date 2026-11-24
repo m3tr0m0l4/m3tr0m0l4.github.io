@@ -258,10 +258,6 @@
 
 <!-- CHAT -->
 <div id="chat" class="tab">
-  <div class="chat-tab-buttons">
-    <button type="button" onclick="switchChatTab('chat1')">Chat 1</button><button type="button" onclick="switchChatTab('chat2')">Chat 2</button>
-  </div>
-
   <div id="chat1" class="chat-subtab">
     <h3>Chat 1</h3>
     <div id="login1">
@@ -280,23 +276,7 @@
     </div>
   </div>
 
-  <div id="chat2" class="chat-subtab">
-    <h3>Chat 2</h3>
-    <div id="login2">
-      Name: <input id="u2" maxlength="20">
-      <button type="button" onclick="if (chat2State) connectChat(chat2State)">Connect</button>
-      <span id="err2" style="color:red"></span>
-    </div>
 
-    <div id="chatBox2" style="display:none">
-      <div style="margin:6px 0;font-family:monospace;font-size:12px;">Users online: <span id="users2">(loading)</span></div>
-      <div id="msgs2" class="msgs" style="height:200px;overflow-y:auto;border:1px solid #ccc;padding:4px;font-family:monospace;font-size:13px;margin-top:6px"></div>
-      <div id="typers2" style="font-size:11px;color:gray;height:16px"></div>
-      <input id="m2" style="width:400px" placeholder="message..." disabled>
-      <button type="button" id="sb2" onclick="if (chat2State) sendMessage(chat2State)" disabled>Send</button>
-      <button type="button" id="reconnectBtn2" onclick="if (chat2State) reloadChat(chat2State)" style="display:none">Reconnect</button>
-    </div>
-  </div>
 </div>
 
 <!-- REQUESTS -->
@@ -1036,10 +1016,7 @@
   }
 
   loadChatConfig().then(function () {
-    return Promise.all([
-      probeChatUsers(1, chat1State && chat1State.server),
-      probeChatUsers(2, chat2State && chat2State.server)
-    ]);
+    return probeChatUsers(1, chat1State && chat1State.server);
   }).then(function () {
     refreshCombinedUsers();
   });
