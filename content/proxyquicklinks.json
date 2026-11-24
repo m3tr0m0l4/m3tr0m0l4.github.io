@@ -1,19 +1,24 @@
 [
   {
-    "label": "Instagram",
+    "label": "instagram",
     "href": "https://instagram.com/",
     "category": "social media"
   },
   {
-    "label": "Internet Archive",
+    "label": "internet archive",
     "href": "https://archive.org/",
     "description": "use for books, movies, wayback machine, whatever.",
     "category": "misc"
   },
   {
-    "label": "Cinejoy",
-    "href": "https://cinejoy.pk/",
+    "label": "arrowtv",
+    "href": "https://arrowtv.net/",
     "description": "free movies and tv in HD",
     "category": "movies & tv"
+  },
+  {
+    "label": "tiktok",
+    "href": "https://tiktok.com/",
+    "category": "social media"
   }
 ]
